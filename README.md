@@ -1,4 +1,4 @@
-let's explore different ways of backing up data from notion:
+let's explore different ways of **backing up data from notion**:
 
 1. _webscraping is unreliable_
 
