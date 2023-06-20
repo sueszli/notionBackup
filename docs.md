@@ -11,10 +11,14 @@ let's explore different ways of backing up data from notion:
    it's therefore smarter to export to html first and convert the html files to markdown later. this is possible even long after notion is gone.
 
 3. _html export works well – but needs some tweaking!_
+
+   the exported html files of notion are not updatable offline, as they are minified.
+
+   they also style the majority of blocks awkwardly.
    
    this is where this tool comes in:
    
    - unzip html exported by notion app
    - prettify html files that are minified (see: https://stackoverflow.com/questions/76512571/how-to-unminify-format-html-without-changing-the-formatting)
-   - fix css (ie. the code block font is too small)
+   - fix css (ie. the code block font is too small) – i should take a closer look at the notionsnapshot exports
    - rewrite parts of html (ie. file names instead of file paths for assets)
