@@ -1,3 +1,5 @@
+## Why this project?
+
 let's explore different ways of backing up data from notion:
 
 1. _webscraping is unreliable_
@@ -15,10 +17,18 @@ let's explore different ways of backing up data from notion:
    the exported html files of notion are not updatable offline, as they are minified.
 
    they also style the majority of blocks awkwardly.
-   
+
    this is where this tool comes in:
-   
+
    - unzip html exported by notion app
    - prettify html files that are minified (see: https://stackoverflow.com/questions/76512571/how-to-unminify-format-html-without-changing-the-formatting)
    - fix css (ie. the code block font is too small) – i should take a closer look at the notionsnapshot exports
    - rewrite parts of html (ie. file names instead of file paths for assets)
+
+<br><br>
+
+## What's next?
+
+Turns out python sucks for this project. I'm going to rewrite this in node.js with typescript at some point.
+
+There are no html formatters in python that are as good as prettier.

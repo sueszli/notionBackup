@@ -1,12 +1,16 @@
 import argparse
 import os
-import subprocess
 import sys
 import shutil
 from typing import Union
 import zipfile
 from bs4 import BeautifulSoup, Tag
-import sys
+import html5lib  # implicitly used by bs4
+import cssutils
+
+import logging
+
+cssutils.log.setLevel(logging.CRITICAL)  # type: ignore
 
 
 class ArgParser:
@@ -20,24 +24,12 @@ class ArgParser:
     @staticmethod
     def parse() -> None:
         parser = argparse.ArgumentParser()
-        parser.add_argument("-f", "--format", help="format html and fix css to make it editable", action="store_true")
         parser.add_argument("-s", "--style", help="add additional css to make html prettier", action="store_true")
         parser.add_argument("-z", "--zip", help="zip output back up", action="store_true")
         parser.add_argument("input", help="input path of zip file or directory to enhance")
         args = parser.parse_args()
         ArgParser._validate_path(args.input)
         ArgParser._parsed_args = args
-
-    @staticmethod
-    def _parseArguments() -> argparse.Namespace:
-        parser = argparse.ArgumentParser()
-        parser.add_argument("-f", "--format", help="format html and fix css to make it editable", action="store_true")
-        parser.add_argument("-s", "--style", help="add additional css to make html prettier", action="store_true")
-        parser.add_argument("-z", "--zip", help="zip output back up", action="store_true")
-        parser.add_argument("input", help="input path of zip file or directory to enhance")
-        args = parser.parse_args()
-        ArgParser._validate_path(args.input)
-        return args
 
     @staticmethod
     def _validate_path(path: str) -> None:
@@ -56,13 +48,7 @@ class NotionBackup:
     def run() -> None:
         NotionBackup._init_output_dir()
         NotionBackup._unzip_input()
-
-        if ArgParser.get_args().format:
-            NotionBackup._format_html()
-        if ArgParser.get_args().style:
-            NotionBackup._style_html()
-        if ArgParser.get_args().zip:
-            NotionBackup._zip_output()
+        NotionBackup._format_html()
 
     @staticmethod
     def _init_output_dir() -> None:
@@ -77,7 +63,7 @@ class NotionBackup:
         filename_without_ext: str = filename[:-4]
         os.mkdir(os.path.join(base_dir, filename_without_ext))
         NotionBackup.output_dir = os.path.join(base_dir, filename_without_ext)
-        print("created %s/%s" % (base_dir, filename_without_ext))
+        print("created: ", base_dir, "/", filename_without_ext, sep="")
 
         shutil.copy(ArgParser.get_args().input, os.path.join(NotionBackup.output_dir, filename))
         print("copied input to output directory")
@@ -93,16 +79,34 @@ class NotionBackup:
 
     @staticmethod
     def _format_html() -> None:
-        # print content of all html files
-        pass
+        assert NotionBackup.output_dir is not None
+        all_files = [os.path.join(root, file) for root, dirs, files in os.walk(NotionBackup.output_dir) for file in files]
+        html_files = list(filter(lambda file: file.endswith(".html"), all_files))
 
-    @staticmethod
-    def _style_html() -> None:
-        pass
+        for file in html_files:
+            soup = BeautifulSoup(open(file), "html5lib")
+            assert soup.find_all("style").__len__() == 1
+            style = soup.find_all("style")[0]
+            assert isinstance(style, Tag)
 
-    @staticmethod
-    def _zip_output() -> None:
-        pass
+            # see: https://developer.mozilla.org/en-US/docs/Web/CSS/white-space
+            css = cssutils.parseString(style.string)
+            style_rules = [rule for rule in css if rule.type == rule.STYLE_RULE]
+            for rule in style_rules:
+                is_body_rule = rule.selectorText == "body"
+                is_pre_wrap_css = rule.style.getPropertyValue("white-space") == "pre-wrap"
+                if is_body_rule and is_pre_wrap_css:
+                    rule.style.setProperty("white-space", "normal")
+
+            fixed_css = str(css.cssText)
+            fixed_css = fixed_css.replace("\\n", "\n")
+            fixed_css = fixed_css[:-1]
+            fixed_css = fixed_css[2:]
+            style.string = fixed_css
+
+            pretty_html = str(soup.prettify())
+            open(file, "w").write(pretty_html)
+            print("formatted:", file)
 
 
 BANNER_ASCII = """

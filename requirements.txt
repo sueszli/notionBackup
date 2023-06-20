@@ -1,1 +1,4 @@
 beautifulsoup4==4.11.2
+cssutils==2.6.0
+html5lib==1.1
+html5print==0.1.2
