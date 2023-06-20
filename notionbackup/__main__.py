@@ -2,6 +2,7 @@ import argparse
 import os
 import subprocess
 import sys
+import shutil
 from typing import Union
 
 
@@ -62,7 +63,7 @@ class ArgParser:
 
 
 class NotionBackup:
-    output_dir = "./output"
+    output_dir: Union[str, None] = None
 
     @staticmethod
     def run() -> None:
@@ -77,13 +78,17 @@ class NotionBackup:
 
     @staticmethod
     def _init_output_dir() -> None:
-        if not os.path.exists(NotionBackup.output_dir):
-            os.mkdir(NotionBackup.output_dir)
-        else:
-            print("warning: output directory already exists, removing all files")
-            for file in os.listdir(NotionBackup.output_dir):
-                os.remove(os.path.join(NotionBackup.output_dir, file))
-        input_name = os.path.basename(ArgParser.get_args().input)
+        base_dir: str = "./output"
+        if os.path.exists(base_dir):
+            shutil.rmtree(base_dir)
+            print("deleted existing {}".format(base_dir))
+        os.mkdir(base_dir)
+        print("created {}".format(base_dir))
+
+        filename: str = os.path.basename(ArgParser.get_args().input)[:-4]
+        os.mkdir(os.path.join(base_dir, filename))
+        NotionBackup.output_dir = os.path.join(base_dir, filename)
+        print("created {}/{}".format(base_dir, filename))
 
     @staticmethod
     def _format_html() -> None:
@@ -108,7 +113,10 @@ BANNER_ASCII = """
 """
 
 if __name__ == "__main__":
-    print(BANNER_ASCII)
     # DependencyManager.run()
+
+    os.system("clear")
+    print(BANNER_ASCII)
+
     ArgParser.parse()
     NotionBackup.run()
