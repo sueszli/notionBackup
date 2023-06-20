@@ -1,4 +1,24 @@
-let's explore different ways of **backing up data from notion**:
+```
+    _   __      __  _                ____             __             
+   / | / /___  / /_(_)___  ____     / __ )____ ______/ /____  ______ 
+  /  |/ / __ \/ __/ / __ \/ __ \   / __  / __ `/ ___/ //_/ / / / __ \
+ / /|  / /_/ / /_/ / /_/ / / / /  / /_/ / /_/ / /__/ ,< / /_/ / /_/ /
+/_/ |_/\____/\__/_/\____/_/ /_/  /_____/\__,_/\___/_/|_|\__,_/ .___/ 
+                                                            /_/      
+```
+
+<br><br><br>
+
+# How to use
+
+Before you begin, please note that this app uses the HTML exports from the notion app to back up your data. This ensures a reliable backup method, but it does not preserve the appearance of the notion page. If you prefer a more aesthetic backup option, you can try “[NotionSnapshot](https://github.com/sueszli/NotionSnapshot)”, which uses web scraping to download every notion page and its asset.
+...
+
+<br><br><br>
+
+# Why to use
+
+let's explore different ways of backing up data from notion:
 
 1. _webscraping is unreliable_
 
