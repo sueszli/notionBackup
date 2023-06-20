@@ -13,10 +13,15 @@ Get the most out of your html exports. Unzip, unminify, beautify! 💄💋
 
 <br>
 
+### Check it out!
+
 ```bash
 git clone https://github.com/sueszli/notionBackup
 cd notionBackup
 python3 notionbackup --help
+
+# example usage
+python3 notionbackup ./demo/blog.zip
 ```
 
 <br>
