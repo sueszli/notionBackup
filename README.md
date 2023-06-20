@@ -24,4 +24,3 @@ cd notionBackup
 # run
 todo: insert installation script here
 ```
-`
