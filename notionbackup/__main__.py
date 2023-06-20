@@ -128,7 +128,7 @@ BANNER_ASCII = """
 """
 
 if __name__ == "__main__":
-    # DependencyManager.run()
+    DependencyManager.run()
 
     os.system("clear")
     print(BANNER_ASCII)
