@@ -6,7 +6,7 @@
 /_/ |_/\____/\__/_/\____/_/ /_/  /_____/\__,_/\___/_/|_|\__,_/ .___/ 
                                                             /_/      
 ```
-Get the most out of your Notion html exports. Unzip, unminify, style!
+Get the most out of your Notion html exports. Unzip, unminify, un-ugly-fy! 🚀
 
 <br><br><br>
 
