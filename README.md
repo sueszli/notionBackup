@@ -8,7 +8,7 @@
 ```
 Get the most out of your html exports. Unzip, unminify, beautify! 💄💋
 
-todo: insert screenshot of final product here
+<!-- todo: insert screenshot of final product here -->
 
 <br><br><br>
 
@@ -22,5 +22,5 @@ git clone https://github.com/sueszli/notionBackup
 cd notionBackup
 
 # run
-todo: insert installation script here
+...
 ```
