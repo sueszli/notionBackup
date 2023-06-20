@@ -11,10 +11,6 @@ Get the most out of your html exports. Unzip, unminify, beautify! 💄💋
 
 <!-- todo: insert screenshot of final product here -->
 
-<br><br><br>
-
-# How to use
-
 Note: This app enhances the html exports from the Notion app to back up your data. This ensures a reliable backup method, but it does not keep the original appearance of your Notion pages. If you prefer a more aesthetic backup option, you can try “[NotionSnapshot](https://github.com/sueszli/NotionSnapshot)”, which relies on web scraping.
 
 ```bash
