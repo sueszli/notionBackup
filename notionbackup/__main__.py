@@ -62,14 +62,28 @@ class ArgParser:
 
 
 class NotionBackup:
+    output_dir = "./output"
+
     @staticmethod
     def run() -> None:
+        NotionBackup._init_output_dir()
+
         if ArgParser.get_args().format:
             NotionBackup._format_html()
         if ArgParser.get_args().style:
             NotionBackup._style_html()
         if ArgParser.get_args().zip:
             NotionBackup._zip_output()
+
+    @staticmethod
+    def _init_output_dir() -> None:
+        if not os.path.exists(NotionBackup.output_dir):
+            os.mkdir(NotionBackup.output_dir)
+        else:
+            print("warning: output directory already exists, removing all files")
+            for file in os.listdir(NotionBackup.output_dir):
+                os.remove(os.path.join(NotionBackup.output_dir, file))
+        input_name = os.path.basename(ArgParser.get_args().input)
 
     @staticmethod
     def _format_html() -> None:
