@@ -8,6 +8,8 @@
 ```
 Get the most out of your html exports. Unzip, unminify, beautify! 💄💋
 
+todo: insert screenshot of final product here
+
 <br><br><br>
 
 # How to use
@@ -20,5 +22,6 @@ git clone https://github.com/sueszli/notionBackup
 cd notionBackup
 
 # run
-...
+todo: insert installation script here
 ```
+`
