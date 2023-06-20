@@ -1,5 +1,3 @@
-# What is this project for
-
 let's explore different ways of backing up data from notion:
 
 1. _webscraping is unreliable_
