@@ -4,6 +4,7 @@ import subprocess
 import sys
 import shutil
 from typing import Union
+import zipfile
 
 
 class DependencyManager:
@@ -68,6 +69,7 @@ class NotionBackup:
     @staticmethod
     def run() -> None:
         NotionBackup._init_output_dir()
+        NotionBackup._unzip_input()
 
         if ArgParser.get_args().format:
             NotionBackup._format_html()
@@ -79,16 +81,29 @@ class NotionBackup:
     @staticmethod
     def _init_output_dir() -> None:
         base_dir: str = "./output"
+
         if os.path.exists(base_dir):
             shutil.rmtree(base_dir)
-            print("deleted existing {}".format(base_dir))
+            print("deleted existing output directory")
         os.mkdir(base_dir)
-        print("created {}".format(base_dir))
 
-        filename: str = os.path.basename(ArgParser.get_args().input)[:-4]
-        os.mkdir(os.path.join(base_dir, filename))
-        NotionBackup.output_dir = os.path.join(base_dir, filename)
-        print("created {}/{}".format(base_dir, filename))
+        filename: str = os.path.basename(ArgParser.get_args().input)
+        filename_without_ext: str = filename[:-4]
+        os.mkdir(os.path.join(base_dir, filename_without_ext))
+        NotionBackup.output_dir = os.path.join(base_dir, filename_without_ext)
+        print("created %s/%s" % (base_dir, filename_without_ext))
+
+        shutil.copy(ArgParser.get_args().input, os.path.join(NotionBackup.output_dir, filename))
+        print("copied input to output directory")
+
+    @staticmethod
+    def _unzip_input() -> None:
+        assert NotionBackup.output_dir is not None
+        path = os.path.join(NotionBackup.output_dir, os.path.basename(ArgParser.get_args().input))
+        with zipfile.ZipFile(path, "r") as zip_ref:
+            zip_ref.extractall(NotionBackup.output_dir)
+        os.remove(path)
+        print("unzipped input in output directory")
 
     @staticmethod
     def _format_html() -> None:
