@@ -11,7 +11,7 @@
 
 # How to use
 
-Before you begin, please note that this app uses the HTML exports from the notion app to back up your data. This ensures a reliable backup method, but it does not preserve the appearance of the notion page. If you prefer a more aesthetic backup option, you can try “[NotionSnapshot](https://github.com/sueszli/NotionSnapshot)”, which uses web scraping to download every notion page and its asset.
+Note: This app enhances the HTML exports from the Notion app to back up your data. This ensures a reliable backup method, but it does not keep the original appearance of your Notion pages. If you prefer a more aesthetic backup option, you can try “[NotionSnapshot](https://github.com/sueszli/NotionSnapshot)”, which relies on web scraping.
 ...
 
 <br><br><br>
