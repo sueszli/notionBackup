@@ -5,22 +5,8 @@ import sys
 import shutil
 from typing import Union
 import zipfile
-
-
-class DependencyManager:
-    @staticmethod
-    def run() -> None:
-        if not os.name == "posix":
-            print("error: detected non unix system")
-            exit(1)
-        python_version = subprocess.run(["python3", "--version"], capture_output=True).stdout.decode("utf-8")
-        if not python_version.startswith("Python 3"):
-            print("error: detected non python3 system")
-            exit(1)
-
-        os.system("python3 -m pip install --upgrade pip > /dev/null")
-        os.system("pip3 install pipreqs > /dev/null && rm -rf requirements.txt > /dev/null && pipreqs . > /dev/null")
-        os.system("pip3 install -r requirements.txt > /dev/null")
+from bs4 import BeautifulSoup, Tag
+import sys
 
 
 class ArgParser:
@@ -107,6 +93,7 @@ class NotionBackup:
 
     @staticmethod
     def _format_html() -> None:
+        # print content of all html files
         pass
 
     @staticmethod
@@ -128,8 +115,6 @@ BANNER_ASCII = """
 """
 
 if __name__ == "__main__":
-    DependencyManager.run()
-
     os.system("clear")
     print(BANNER_ASCII)
 
