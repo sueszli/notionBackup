@@ -14,11 +14,25 @@ Unzip, unminify, beautify!
 
 <br>
 
-Let's explore different ways to back up data from Notion:
+Ways to back up data from Notion:
 
-1. Web scraping creates beautiful backups but is unreliable due to unscrapable fonts/assets, content variations, and UI changes (see: [notionSnapshot](https://github.com/sueszli/notionSnapshot/)). ❌
+1. [notionSnapshot](https://github.com/sueszli/notionSnapshot/) - Web scraping that approximates the original page, but unreliable due to limitations. ❌
 
-2. Exporting to markdown can result in data loss compared to HTML as it is not as expressive as HTML. You can convert HTML to markdown even without Notion. ❌
+2. Exporting to markdown - Results in data loss compared to HTML due to markdown's limited expressiveness. ❌
+
+3. Exporting to HTML - Requires formatting, CSS fixes, and asset path rewriting. ✅
+
+This tool helps with:
+
+-   Unzipping HTML exports
+-   Formatting minified HTML files
+-   Fixing CSS issues
+-   Rewriting parts of the HTML (e.g., file names for assets)
+
+1. Web scraping with [notionSnapshot](https://github.com/sueszli/notionSnapshot/) gets you closest to the original Notion page but
+   it is unreliable due to unscrapable fonts/assets, content variations, and UI changes ❌
+
+2. Exporting pages to markdown can result in data loss compared to HTML as markdown it is not as expressive as HTML ❌
 
 3. Exporting to HTML works well but requires some tweaking. The exported HTML differs from the Notion app and needs formatting, CSS fixes, and rewriting of file paths for assets. ✅
 
