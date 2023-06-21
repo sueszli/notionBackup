@@ -1,7 +1,6 @@
 'use strict'
 
 const { ArgumentParser } = require('argparse')
-const { version } = require('./package.json')
 
 const perror = (message) => {
     const stackTrace = process.stack.slice()
@@ -18,23 +17,29 @@ const assert = (assertion) => {
 class ArgParser {
     static #args = null
 
+    static getArgs() {
+        assert(ArgParser.#args !== null)
+        return ArgParser.#args
+    }
     static parse() {
         const parser = new ArgumentParser({ description: 'notion html export deobfuscator' })
-        parser.add_argument('-v', '--version', { action: 'version', version })
-        parser.add_argument('-z', '--zip', { help: 'zip output', action: 'store_true' })
-        parser.add_argument('-s', '--style', { help: 'overwrite notions default css with custom css', action: 'store_true' })
-        parser.add_argument('input', { help: 'path to .zip file containing html export' })
+        parser.add_argument('-z', '--zip', { help: 'zip output after processing', action: 'store_true' })
+        parser.add_argument('-s', '--style', { help: 'overwrite notions default styling with custom css', action: 'store_true' })
+        parser.add_argument('input', { help: 'path to zip file containing the html export' })
+
+        const inputPath = parser.parse_args().input
+        ArgParser.#validateInputPath(inputPath)
+
         ArgParser.#args = parser.parse_args()
     }
 
-    static get_args() {
-        assert(ArgParser.#args !== null)
-        return ArgParser.#args
+    static #validateInputPath = (inputPath) => {
+        assert(inputPath)
     }
 }
 
 async function main() {
     ArgParser.parse()
-    console.log(ArgParser.get_args())
+    console.log(ArgParser.getArgs())
 }
 main()
