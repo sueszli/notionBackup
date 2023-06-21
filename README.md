@@ -6,8 +6,8 @@
 /_/ |_/\____/\__/_/\____/_/ /_/  /_____/\__,_/\___/_/|_|\__,_/ .___/
                                                             /_/
 
-A Notion HTML export enhancer.
-Unzip, unminify, beautify - Keep your Notion pages forever.
+A deobfuscator for Notion HTML exports.
+Turn your exported files into editable and visually appealing pages – keep them forever.
 ```
 
 The HTML files exported through Notion are minified and therefore not editable. This script formats them and optionally adds some CSS to make them look better.

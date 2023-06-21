@@ -8,7 +8,7 @@ class ArgParser {
 
     static parse() {
         const parser = new ArgumentParser({
-            description: 'A Notion HTML export enhancer',
+            description: 'notion html export → pretty html',
         })
 
         parser.add_argument('-v', '--version', { action: 'version', version })
