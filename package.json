@@ -1,0 +1,32 @@
+{
+    "name": "notionbackup",
+    "version": "1.0.0",
+    "description": "notion html export enhancer",
+    "main": "index.ts",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sueszli/notionBackup.git"
+    },
+    "keywords": [
+        "notion",
+        "html",
+        "backup",
+        "export",
+        "unzip",
+        "unminify",
+        "beautify",
+        "prettify"
+    ],
+    "author": "sueszli",
+    "license": "SEE LICENSE IN LICENSE",
+    "bugs": {
+        "url": "https://github.com/sueszli/notionBackup/issues"
+    },
+    "homepage": "https://github.com/sueszli/notionBackup#readme",
+    "devDependencies": {
+        "typescript": "^5.1.3"
+    }
+}

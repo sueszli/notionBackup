@@ -29,9 +29,7 @@ let's explore different ways of backing up data from notion:
 
 ## What's next?
 
-turns out python sucks for this project. I'm going to rewrite this in node.js with typescript at some point.
-
-(make sure not to delete the `./demo` folder, as it is expensive to upload again with git lfs)
+turns out python sucks for this project - that's why i rewrote it in node.js.
 
 - there are no good html formatters in python (in node.js, there is prettier)
 - there are no good css parsers in python
