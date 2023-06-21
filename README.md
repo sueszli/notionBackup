@@ -5,23 +5,22 @@
  / /|  / /_/ / /_/ / /_/ / / / /  / /_/ / /_/ / /__/ ,< / /_/ / /_/ /
 /_/ |_/\____/\__/_/\____/_/ /_/  /_____/\__,_/\___/_/|_|\__,_/ .___/
                                                             /_/
-```
 
-Get the most out of your html exports. Unzip, unminify, beautify! 💄💋
+An enhancer for your Notion HTML exports.
+Unzip, unminify, beautify!
+```
 
 <!-- todo: insert screenshot of final product here -->
 
 <br>
 
-## How do I back up my data from Notion?
-
 Let's explore different ways to back up data from Notion:
 
-1. Web scraping creates beautiful backups but is unreliable due to unscrapable fonts/assets, content variations, and UI changes (see: [notionSnapshot](https://github.com/sueszli/notionSnapshot/)).
+1. Web scraping creates beautiful backups but is unreliable due to unscrapable fonts/assets, content variations, and UI changes (see: [notionSnapshot](https://github.com/sueszli/notionSnapshot/)). ❌
 
-2. Exporting to markdown can result in data loss compared to HTML as it is not as expressive as HTML.
+2. Exporting to markdown can result in data loss compared to HTML as it is not as expressive as HTML. You can convert HTML to markdown even without Notion. ❌
 
-3. Exporting to HTML works well but requires some tweaking. The exported HTML differs from the Notion app and needs formatting, CSS fixes, and rewriting of file paths for assets.
+3. Exporting to HTML works well but requires some tweaking. The exported HTML differs from the Notion app and needs formatting, CSS fixes, and rewriting of file paths for assets. ✅
 
     <ins>This is where this tool comes in:</ins>
 
