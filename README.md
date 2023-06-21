@@ -7,7 +7,7 @@
                                                             /_/
 
 An enhancer for your Notion HTML exports.
-Unzip, unminify, beautify!
+Unzip, unminify, beautify - Keep forever!
 ```
 
 <!-- todo: insert screenshot of final product here -->
