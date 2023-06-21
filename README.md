@@ -13,9 +13,7 @@ Get the most out of your html exports. Unzip, unminify, beautify! 💄💋
 
 <br>
 
----
-
-<br>
+## How do I back up my data from Notion?
 
 Let's explore different ways to back up data from Notion:
 
@@ -32,9 +30,9 @@ Let's explore different ways to back up data from Notion:
     - fixing CSS issues (e.g., adjusting code block font size)
     - rewriting certain parts of the HTML (e.g., file names instead of file paths for assets)
 
-<br>
+<br><br>
 
-### Check it out!
+## Check it out!
 
 Just run the following bash script:
 
