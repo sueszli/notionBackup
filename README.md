@@ -11,30 +11,26 @@ Get the most out of your html exports. Unzip, unminify, beautify! 💄💋
 
 <!-- todo: insert screenshot of final product here -->
 
-let's explore different ways of backing up data from notion:
+<br>
 
-1. _webscraping is unreliable_
+---
 
-    due to limitations such as unscrapable fonts/assets, content variations, and frequent UI changes - i learned that after building [notionSnapshot](https://github.com/sueszli/notionSnapshot/).
+<br>
 
-2. _markdown export causes data loss_
+Let's explore different ways to back up data from Notion:
 
-    because markdown has no formatting options and fewer features than html.
+1. Web scraping creates beautiful backups but is unreliable due to unscrapable fonts/assets, content variations, and UI changes (see: [notionSnapshot](https://github.com/sueszli/notionSnapshot/)).
 
-    it's therefore smarter to export to html first and convert the html files to markdown later. this is possible even long after notion is gone.
+2. Exporting to markdown can result in data loss compared to HTML as it is not as expressive as HTML.
 
-3. _html export works well – but needs some tweaking!_
+3. Exporting to HTML works well but requires some tweaking. The exported HTML differs from the Notion app and needs formatting, CSS fixes, and rewriting of file paths for assets.
 
-    the exported html files of notion are not updatable offline, as they are minified.
+    <ins>This is where this tool comes in:</ins>
 
-    they also style the majority of blocks awkwardly.
-
-    this is where this tool comes in:
-
-    - unzip html exported by notion app
-    - prettify html files that are minified (see: https://stackoverflow.com/questions/76512571/how-to-unminify-format-html-without-changing-the-formatting)
-    - fix css (ie. the code block font is too small) – i should take a closer look at the notionsnapshot exports
-    - rewrite parts of html (ie. file names instead of file paths for assets)
+    - unzipping HTML exports
+    - formatting minified HTML files (see: [Stack Overflow](https://stackoverflow.com/questions/76512571/how-to-unminify-format-html-without-changing-the-formatting))
+    - fixing CSS issues (e.g., adjusting code block font size)
+    - rewriting certain parts of the HTML (e.g., file names instead of file paths for assets)
 
 <br>
 
@@ -57,7 +53,3 @@ node index.js
 # example usage
 node index.js ./demo/blog.zip
 ```
-
-<br>
-
-Note: This app enhances the html exports from the Notion app to back up your data. This ensures a reliable backup method, but it does not keep the original appearance of your Notion pages. If you prefer a more aesthetic backup option, you can try “[NotionSnapshot](https://github.com/sueszli/NotionSnapshot)”, which relies on web scraping.
