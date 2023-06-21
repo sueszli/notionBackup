@@ -6,42 +6,13 @@
 /_/ |_/\____/\__/_/\____/_/ /_/  /_____/\__,_/\___/_/|_|\__,_/ .___/
                                                             /_/
 
-An enhancer for your Notion HTML exports.
+A Notion HTML export enhancer.
 Unzip, unminify, beautify - Keep forever!
 ```
 
 <!-- todo: insert screenshot of final product here -->
 
 <br>
-
-Ways to back up data from Notion:
-
-1. [notionSnapshot](https://github.com/sueszli/notionSnapshot/) - Web scraping that approximates the original page, but unreliable due to limitations. ❌
-
-2. Exporting to markdown - Results in data loss compared to HTML due to markdown's limited expressiveness. ❌
-
-3. Exporting to HTML - Requires formatting, CSS fixes, and asset path rewriting. ✅
-
-This tool helps with:
-
--   Unzipping HTML exports
--   Formatting minified HTML files
--   Fixing CSS issues
--   Rewriting parts of the HTML (e.g., file names for assets)
-
-1. Web scraping with [notionSnapshot](https://github.com/sueszli/notionSnapshot/) gets you closest to the original Notion page but
-   it is unreliable due to unscrapable fonts/assets, content variations, and UI changes ❌
-
-2. Exporting pages to markdown can result in data loss compared to HTML as markdown it is not as expressive as HTML ❌
-
-3. Exporting to HTML works well but requires some tweaking. The exported HTML differs from the Notion app and needs formatting, CSS fixes, and rewriting of file paths for assets. ✅
-
-    <ins>This is where this tool comes in:</ins>
-
-    - unzipping HTML exports
-    - formatting minified HTML files (see: [Stack Overflow](https://stackoverflow.com/questions/76512571/how-to-unminify-format-html-without-changing-the-formatting))
-    - fixing CSS issues (e.g., adjusting code block font size)
-    - rewriting certain parts of the HTML (e.g., file names instead of file paths for assets)
 
 <br><br>
 
@@ -59,7 +30,7 @@ npm install
 clear
 
 # run
-node index.js
+node index.js --help
 
 # example usage
 node index.js ./demo/blog.zip
