@@ -7,16 +7,12 @@
                                                             /_/
 
 A Notion HTML export enhancer.
-Unzip, unminify, beautify - Keep forever!
+Unzip, unminify, beautify - Keep your Notion pages forever.
 ```
 
-<!-- todo: insert screenshot of final product here -->
+The HTML files exported through Notion are minified and therefore not editable. This script formats them and optionally adds some CSS to make them look better.
 
 <br>
-
-<br><br>
-
-## Check it out!
 
 Just run the following bash script:
 
