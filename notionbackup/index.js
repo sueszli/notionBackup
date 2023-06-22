@@ -2,7 +2,7 @@ import { log } from 'console'
 import { ArgumentParser } from 'argparse'
 import * as fs from 'fs'
 import * as path from 'path'
-import * as extractZip from 'extract-zip'
+import { extractZip } from 'extract-zip'
 
 const perror = (message) => {
     assert(message && typeof message === 'string')
@@ -84,20 +84,23 @@ class NotionBackup {
         log('copied input file to output directory')
     }
 
-    static #unzip() {
+    static async #unzip() {
         assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
+
+        const src = path.join(NotionBackup.#outputDirPath, path.basename(ArgParser.getArgs().input))
+        const dst = NotionBackup.#outputDirPath
+        await extractZip(src, { dir: dst })
     }
 
-    static run() {
-        const inputPath = path.resolve(ArgParser.getArgs().input)
+    static async run() {
         NotionBackup.#initOutputDir()
         NotionBackup.#copyToOutputDir()
-        NotionBackup.#unzip()
+        await NotionBackup.#unzip()
     }
 }
 
-function main() {
+async function main() {
     ArgParser.parseArgs()
-    NotionBackup.run()
+    await NotionBackup.run()
 }
 main()
