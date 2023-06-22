@@ -10,13 +10,9 @@ A deobfuscator for Notion HTML exports.
 Turn your exported files into editable and visually appealing pages – keep them forever.
 ```
 
-<br>
-
-Notion's HTML exports are minified and obfuscated – just look at this mess:
-
 <img alt="obfuscated" src="https://github.com/sueszli/notionBackup/assets/61852663/7cb89455-db54-446f-a557-651470c9d629">
 
-This project fixes just that and additionally makes the pages prettier by adding some styling.
+With this project you'll never have to deal with obfuscated Notion exports again like the one above again.
 
 <br><br>
 
