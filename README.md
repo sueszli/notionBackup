@@ -22,6 +22,7 @@ git clone https://github.com/sueszli/notionBackup
 cd notionBackup
 
 # install dependencies
+npm install npm@latest -g
 npm install
 clear
 
@@ -29,7 +30,7 @@ clear
 node notionbackup --help
 
 # example usage
-node notionbackup -o ./demo/blog.zip
+node notionbackup -s ./demo/blog.zip
 ```
 
 This project is a work in progress. Feel free to contribute or open an issue.

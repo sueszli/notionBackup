@@ -23,6 +23,7 @@ const assert = (assertion) => {
 class Utils {
     static osWalk(dirPath) {
         assert(dirPath && typeof dirPath === 'string')
+        assert(fs.statSync(dirPath).isDirectory())
         const children = fs.readdirSync(dirPath).map((child) => path.join(dirPath, child))
         const subDirs = children.filter((child) => fs.statSync(child).isDirectory())
         const subFiles = children.filter((child) => fs.statSync(child).isFile())
@@ -50,7 +51,7 @@ class ArgParser {
 
     static parseArgs() {
         const parser = new ArgumentParser({ description: 'notion html export deobfuscator' })
-        parser.add_argument('-o', '--optimize', { help: 'remove redundancy in html files', action: 'store_true' })
+        parser.add_argument('-s', '--style', { help: 'make output prettier', action: 'store_true' })
         parser.add_argument('input', { help: 'path to zip file containing the html export' })
         const args = parser.parse_args()
 
@@ -147,7 +148,7 @@ class NotionBackup {
         log("set pre-wrap to 'normal' in css")
     }
 
-    static #optimize() {
+    static #optimizeHtml() {
         assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
         const htmlPaths = Utils.osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
 
@@ -155,37 +156,68 @@ class NotionBackup {
             const htmlStr = fs.readFileSync(htmlPath, 'utf8')
             const dom = new jsdom.JSDOM(htmlStr)
             const elems = dom.window.document.querySelectorAll('*')
+
+            // remove ids
             elems.forEach((elem) => elem.removeAttribute('id'))
-            fs.writeFileSync(htmlPath, dom.serialize())
+
+            // remove empty class attributes
+            Array.from(elems)
+                .filter((elem) => elem.hasAttribute('class'))
+                .filter((elem) => {
+                    const classList = elem
+                        .getAttribute('class')
+                        .split(' ')
+                        .filter((s) => s.trim())
+                    return classList.length === 0
+                })
+                .forEach((elem) => elem.removeAttribute('class'))
+
+            const optimizedHtmlStr = dom.serialize()
+            fs.writeFileSync(htmlPath, optimizedHtmlStr)
         })
-        log('removed ids in html elements')
+        log('removed ids and empty class attributes in html elements')
+    }
+
+    static #fixLinks() {
+        assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
+        const htmlPaths = Utils.osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
 
         htmlPaths.forEach((htmlPath) => {
             const htmlStr = fs.readFileSync(htmlPath, 'utf8')
             const dom = new jsdom.JSDOM(htmlStr)
             const elems = dom.window.document.querySelectorAll('*')
 
-            Array.from(elems)
+            const anchorWrappers = Array.from(elems)
                 .filter((elem) => elem.hasAttribute('class'))
-                .elems.forEach((elem) => {
-                    const hasClassAttr = elem.hasAttribute('class')
-                    if (!hasClassAttr) {
-                        return
-                    }
-
-                    const classAttrList = elem
+                .filter((elem) => {
+                    const classList = elem
                         .getAttribute('class')
                         .split(' ')
                         .filter((s) => s.trim())
-                    if (classAttrList.length === 0) {
-                        elem.removeAttribute('class')
-                    }
+                    return classList.includes('source')
                 })
+            const anchors = anchorWrappers.map((wrapper) => wrapper.querySelector('a')).filter((anchor) => anchor)
 
-            log(dom.serialize())
-            fs.writeFileSync(htmlPath, dom.serialize())
+            anchors.forEach((anchor) => {
+                const hasHref = anchor.hasAttribute('href')
+                if (!hasHref) {
+                    log('found anchor block with no href in :', htmlPath)
+                    return
+                }
+
+                const href = anchor.getAttribute('href')
+                if (href.startsWith('http')) {
+                    log('found anchor block with external link in :', htmlPath)
+                    return
+                }
+                const filename = path.basename(href)
+                anchor.textContent = filename
+            })
+
+            const optimizedHtmlStr = dom.serialize()
+            fs.writeFileSync(htmlPath, optimizedHtmlStr)
         })
-        log('removed ids in html elements')
+        log('updated attachment links to the filename')
     }
 
     static #format() {
@@ -210,11 +242,10 @@ class NotionBackup {
         NotionBackup.#copyToOutputDir()
         NotionBackup.#unzip()
         NotionBackup.#fixPreWrap()
+        NotionBackup.#optimizeHtml()
 
-        NotionBackup.#format() // remove this
-
-        if (ArgParser.getArgs().optimize) {
-            NotionBackup.#optimize()
+        if (ArgParser.getArgs().style) {
+            NotionBackup.#fixLinks()
         }
 
         NotionBackup.#format()
@@ -229,11 +260,9 @@ const BANNER =
     '/_/ |_/\\____/\\__/_/\\____/_/ /_/  /_____/\\__,_/\\___/_/|_|\\__,_/ .___/\n' +
     '                                                            /_/'
 function main() {
-    // log(BANNER)
+    console.clear()
+    log(BANNER)
     ArgParser.parseArgs()
     NotionBackup.run()
-
-    // todo: make sure zip files arent corrupted
-    // todo: advertise project on reddit, hackernews etc.
 }
 main()
