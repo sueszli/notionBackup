@@ -29,6 +29,15 @@ class Utils {
         const subFiles = children.filter((child) => fs.statSync(child).isFile())
         return [...subFiles, ...subDirs.map((s) => Utils.osWalk(s)).flat()]
     }
+
+    static getHtmlElementClassList(elem) {
+        assert(elem && elem.hasAttribute('class'))
+        const classList = elem
+            .getAttribute('class')
+            .split(' ')
+            .filter((s) => s.trim())
+        return classList
+    }
 }
 
 class ArgParser {
@@ -101,52 +110,6 @@ class NotionBackup {
         log('unzipped input file')
     }
 
-    static #fixPreWrap() {
-        const getFixedHtmlStr = (htmlStr) => {
-            assert(htmlStr && typeof htmlStr === 'string')
-
-            const dom = new jsdom.JSDOM(htmlStr)
-            const styleElem = dom.window.document.querySelector('style')
-            const styleContent = styleElem.innerHTML
-            assert(styleContent)
-
-            /*
-            body {
-                line-height: 1.5;
-                white-space: pre-wrap; ⬅ change to 'normal'
-            }
-            */
-            const cssObj = css.parse(styleContent)
-            const isBodyExclusiveRule = (rule) => rule.type === 'rule' && rule.selectors.includes('body') && rule.selectors.length === 1
-            const numBodyRules = cssObj.stylesheet.rules.filter((rule) => isBodyExclusiveRule(rule)).length
-            if (numBodyRules !== 1) {
-                perror('html does not match the expected format')
-            }
-            cssObj.stylesheet.rules
-                .filter((rule) => isBodyExclusiveRule(rule))
-                .forEach((rule) => {
-                    rule.declarations.forEach((declaration) => {
-                        if (declaration.property === 'white-space') {
-                            declaration.value = 'normal'
-                        }
-                    })
-                })
-
-            const newStyleContent = css.stringify(cssObj)
-            styleElem.innerHTML = newStyleContent
-            return dom.serialize()
-        }
-
-        assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
-        const htmlPaths = Utils.osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
-        htmlPaths.forEach((htmlPath) => {
-            const brokenHtmlStr = fs.readFileSync(htmlPath, 'utf8')
-            const fixedHtmlStr = getFixedHtmlStr(brokenHtmlStr)
-            fs.writeFileSync(htmlPath, fixedHtmlStr)
-        })
-        log("set pre-wrap to 'normal' in css")
-    }
-
     static #fixLinks() {
         assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
         const htmlPaths = Utils.osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
@@ -158,156 +121,28 @@ class NotionBackup {
 
             const anchorWrappers = Array.from(elems)
                 .filter((elem) => elem.hasAttribute('class'))
-                .filter((elem) => {
-                    const classList = elem
-                        .getAttribute('class')
-                        .split(' ')
-                        .filter((s) => s.trim())
-                    return classList.includes('source')
-                })
+                .filter((elem) => Utils.getHtmlElementClassList(elem).includes('source'))
             const anchors = anchorWrappers.map((wrapper) => wrapper.querySelector('a')).filter((anchor) => anchor)
 
             anchors.forEach((anchor) => {
                 const hasHref = anchor.hasAttribute('href')
-                if (!hasHref) {
-                    log('found anchor block with no href in :', htmlPath)
+                if (!hasHref || !anchor.getAttribute('href')) {
+                    log('found anchor block without href / with external href in :', htmlPath)
                     return
                 }
-
-                const href = anchor.getAttribute('href')
-                if (href.startsWith('http')) {
-                    log('found anchor block with external link in :', htmlPath)
+                const link = anchor.getAttribute('href')
+                if (link.startsWith('http')) {
+                    log('found external link in :', htmlPath)
                     return
                 }
-                const filename = path.basename(href)
+                const filename = path.basename(link)
                 anchor.textContent = filename
             })
 
             const optimizedHtmlStr = dom.serialize()
             fs.writeFileSync(htmlPath, optimizedHtmlStr)
         })
-        log('updated attachment links to the filename')
-    }
-
-    static #fixCode() {
-        assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
-        const htmlPaths = Utils.osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
-
-        htmlPaths.forEach((htmlPath) => {
-            const htmlStr = fs.readFileSync(htmlPath, 'utf8')
-            const dom = new jsdom.JSDOM(htmlStr)
-            const styleElem = dom.window.document.querySelector('style')
-            const styleContent = styleElem.innerHTML
-            assert(styleContent)
-
-            const cssObj = css.parse(styleContent)
-            const sMatch = ['.code', 'code']
-            const codeRules = cssObj.stylesheet.rules
-                .filter((rule) => rule.type === 'rule')
-                .filter((rule) => rule.selectors.length === sMatch.length && rule.selectors.every((selector) => sMatch.includes(selector)))
-            if (codeRules.length !== 1) {
-                perror('html does not match the expected format')
-            }
-            codeRules.forEach((rule) => {
-                rule.declarations.forEach((declaration) => {
-                    if (declaration.property === 'font-size') {
-                        declaration.value = '100%'
-                    }
-                })
-            })
-
-            const newStyleContent = css.stringify(cssObj)
-            styleElem.innerHTML = newStyleContent
-            const newHtmlStr = dom.serialize()
-            fs.writeFileSync(htmlPath, newHtmlStr)
-        })
-        log('fixed font size of code blocks')
-    }
-
-    static #fixBlockQuotes() {
-        assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
-        const htmlPaths = Utils.osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
-
-        htmlPaths.forEach((htmlPath) => {
-            const htmlStr = fs.readFileSync(htmlPath, 'utf8')
-            const dom = new jsdom.JSDOM(htmlStr)
-            const styleElem = dom.window.document.querySelector('style')
-            const styleContent = styleElem.innerHTML
-            assert(styleContent)
-
-            const cssObj = css.parse(styleContent)
-            const blockQuoteRules = cssObj.stylesheet.rules
-                .filter((rule) => rule.type === 'rule')
-                .filter((rule) => rule.selectors.length === 1 && rule.selectors[0] === 'blockquote')
-            if (blockQuoteRules.length !== 1) {
-                perror('html does not match the expected format')
-            }
-            blockQuoteRules.forEach((rule) => {
-                rule.declarations.forEach((declaration) => {
-                    if (declaration.property === 'font-size') {
-                        declaration.value = '100%'
-                    }
-                })
-            })
-
-            const newStyleContent = css.stringify(cssObj)
-            styleElem.innerHTML = newStyleContent
-            const newHtmlStr = dom.serialize()
-            fs.writeFileSync(htmlPath, newHtmlStr)
-        })
-        log('fixed font size of block quotes')
-    }
-
-    static #fixCallouts() {
-        assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
-        const htmlPaths = Utils.osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
-
-        htmlPaths.forEach((htmlPath) => {
-            const htmlStr = fs.readFileSync(htmlPath, 'utf8')
-            const dom = new jsdom.JSDOM(htmlStr)
-            const elems = dom.window.document.querySelectorAll('*')
-
-            const calloutFigures = Array.from(elems)
-                .filter((elem) => elem.tagName.toLowerCase() === 'figure' && elem.hasAttribute('class'))
-                .filter((elem) => elem.hasAttribute('class'))
-                .filter((elem) => {
-                    const classList = elem
-                        .getAttribute('class')
-                        .split(' ')
-                        .filter((s) => s.trim())
-                    return classList.includes('callout')
-                })
-
-            // set pre-wrap to normal
-            calloutFigures.forEach((figure) => {
-                const style = figure.getAttribute('style')
-                assert(style.includes('white-space'))
-                assert(style.includes('pre-wrap'))
-                figure.setAttribute('style', style.replace('pre-wrap', 'normal'))
-            })
-
-            // remove styling for icon
-            calloutFigures.forEach((figure) => {
-                Array.from(figure.children)
-                    .filter((child) => child.tagName.toLowerCase() === 'div')
-                    .filter((child) => {
-                        const spanChildren = Array.from(child.children).find((grandChild) => grandChild.tagName.toLowerCase() === 'span')
-                        if (!spanChildren) {
-                            return false
-                        }
-                        const classList = spanChildren
-                            .getAttribute('class')
-                            .split(' ')
-                            .filter((s) => s.trim())
-                        return classList.includes('icon')
-                    })
-                    .forEach((child) => child.removeAttribute('style'))
-            })
-
-            const optimizedHtmlStr = dom.serialize()
-            fs.writeFileSync(htmlPath, optimizedHtmlStr)
-        })
-        log('fixed callout styles')
+        log('changed descriptions of attachments from path to filename')
     }
 
     static #injectCss() {
@@ -330,7 +165,6 @@ class NotionBackup {
             const newHtmlStr = dom.serialize()
             fs.writeFileSync(htmlPath, newHtmlStr)
         })
-
         log('injected custom css')
     }
 
@@ -349,13 +183,7 @@ class NotionBackup {
             // remove empty class attributes
             Array.from(elems)
                 .filter((elem) => elem.hasAttribute('class'))
-                .filter((elem) => {
-                    const classList = elem
-                        .getAttribute('class')
-                        .split(' ')
-                        .filter((s) => s.trim())
-                    return classList.length === 0
-                })
+                .filter((elem) => Utils.getHtmlElementClassList(elem).length === 0)
                 .forEach((elem) => elem.removeAttribute('class'))
 
             const optimizedHtmlStr = dom.serialize()
@@ -365,19 +193,20 @@ class NotionBackup {
     }
 
     static #format() {
+        const CONFIG = {
+            parser: 'html',
+            tabWidth: 4,
+            printWidth: 160,
+            htmlWhitespaceSensitivity: 'ignore',
+            bracketSameLine: true,
+        }
+
         assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
         const htmlPaths = Utils.osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
 
         htmlPaths.forEach((htmlPath) => {
             const uglyHtmlStr = fs.readFileSync(htmlPath, 'utf8')
-            const prettierConfig = {
-                parser: 'html',
-                tabWidth: 4,
-                printWidth: 160,
-                htmlWhitespaceSensitivity: 'ignore',
-                bracketSameLine: true,
-            }
-            const prettyHtmlStr = prettier.format(uglyHtmlStr, prettierConfig)
+            const prettyHtmlStr = prettier.format(uglyHtmlStr, CONFIG)
             fs.writeFileSync(htmlPath, prettyHtmlStr)
         })
         log('formatted html files')
@@ -387,12 +216,7 @@ class NotionBackup {
         NotionBackup.#initOutputDir()
         NotionBackup.#copyToOutputDir()
         NotionBackup.#unzip()
-
-        NotionBackup.#fixPreWrap()
         NotionBackup.#fixLinks()
-        NotionBackup.#fixCode()
-        NotionBackup.#fixBlockQuotes()
-        NotionBackup.#fixCallouts()
 
         NotionBackup.#injectCss()
         NotionBackup.#optimizeHtml()

@@ -1,5 +1,25 @@
-/* injected css from notionBackup project ⬇ */
+/* -------- injections from notionBackup -------- */
+
+body {
+    white-space: normal !important;
+}
+
+.code,
+code {
+    font-size: 100% !important;
+}
+
+blockquote {
+    font-size: 100% !important;
+}
+
+.callout {
+    white-space: normal !important;
+}
+.callout div:has(span.icon) {
+    font-size: 100% !important;
+}
 
 .source:not(.bookmark) {
-    font-size: 16px;
+    font-size: 100% !important;
 }
