@@ -19,15 +19,13 @@ const assert = (assertion) => {
     }
 }
 
-class Utils {
-    static osWalk(dirPath) {
-        assert(dirPath && typeof dirPath === 'string')
-        assert(fs.statSync(dirPath).isDirectory())
-        const children = fs.readdirSync(dirPath).map((child) => path.join(dirPath, child))
-        const subDirs = children.filter((child) => fs.statSync(child).isDirectory())
-        const subFiles = children.filter((child) => fs.statSync(child).isFile())
-        return [...subFiles, ...subDirs.map((s) => Utils.osWalk(s)).flat()]
-    }
+const osWalk = (dirPath) => {
+    assert(dirPath && typeof dirPath === 'string')
+    assert(fs.statSync(dirPath).isDirectory())
+    const children = fs.readdirSync(dirPath).map((child) => path.join(dirPath, child))
+    const subDirs = children.filter((child) => fs.statSync(child).isDirectory())
+    const subFiles = children.filter((child) => fs.statSync(child).isFile())
+    return [...subFiles, ...subDirs.map((s) => osWalk(s)).flat()]
 }
 
 class ArgParser {
@@ -102,7 +100,7 @@ class NotionBackup {
 
     static #fix() {
         assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
-        const htmlPaths = Utils.osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
+        const htmlPaths = osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
 
         const injectCssPath = path.join(process.cwd(), 'notionBackup', 'inject.css')
         const injectCssStr = fs.readFileSync(injectCssPath, 'utf8')
@@ -163,7 +161,7 @@ class NotionBackup {
 
     static #format() {
         assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
-        const htmlPaths = Utils.osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
+        const htmlPaths = osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
 
         const promises = htmlPaths.map((htmlPath) => {
             const uglyHtmlStr = fs.readFileSync(htmlPath, 'utf8')
