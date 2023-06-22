@@ -220,6 +220,38 @@ class NotionBackup {
         log('updated attachment links to the filename')
     }
 
+    static #fixCallouts() {
+        assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
+        const htmlPaths = Utils.osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
+
+        htmlPaths.forEach((htmlPath) => {
+            const htmlStr = fs.readFileSync(htmlPath, 'utf8')
+            const dom = new jsdom.JSDOM(htmlStr)
+            const elems = dom.window.document.querySelectorAll('*')
+
+            const calloutFigures = Array.from(elems)
+                .filter((elem) => elem.tagName.toLowerCase() === 'figure' && elem.hasAttribute('class'))
+                .filter((elem) => elem.hasAttribute('class'))
+                .filter((elem) => {
+                    const classList = elem
+                        .getAttribute('class')
+                        .split(' ')
+                        .filter((s) => s.trim())
+                    return classList.includes('callout')
+                })
+            calloutFigures.forEach((figure) => {
+                const style = figure.getAttribute('style')
+                assert(style.includes('white-space'))
+                assert(style.includes('pre-wrap'))
+                figure.setAttribute('style', style.replace('pre-wrap', 'normal'))
+            })
+
+            const optimizedHtmlStr = dom.serialize()
+            fs.writeFileSync(htmlPath, optimizedHtmlStr)
+        })
+        log('fixed callout styles')
+    }
+
     static #format() {
         assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
         const htmlPaths = Utils.osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
@@ -246,6 +278,7 @@ class NotionBackup {
 
         if (ArgParser.getArgs().style) {
             NotionBackup.#fixLinks()
+            NotionBackup.#fixCallouts()
         }
 
         NotionBackup.#format()
