@@ -239,6 +239,8 @@ class NotionBackup {
                         .filter((s) => s.trim())
                     return classList.includes('callout')
                 })
+
+            // set pre-wrap to normal
             calloutFigures.forEach((figure) => {
                 const style = figure.getAttribute('style')
                 assert(style.includes('white-space'))
@@ -246,10 +248,52 @@ class NotionBackup {
                 figure.setAttribute('style', style.replace('pre-wrap', 'normal'))
             })
 
+            // remove styling for icon
+            calloutFigures.forEach((figure) => {
+                Array.from(figure.children)
+                    .filter((child) => child.tagName.toLowerCase() === 'div')
+                    .filter((child) => {
+                        const spanChildren = Array.from(child.children).find((grandChild) => grandChild.tagName.toLowerCase() === 'span')
+                        if (!spanChildren) {
+                            return false
+                        }
+                        const classList = spanChildren
+                            .getAttribute('class')
+                            .split(' ')
+                            .filter((s) => s.trim())
+                        return classList.includes('icon')
+                    })
+                    .forEach((child) => child.removeAttribute('style'))
+            })
+
             const optimizedHtmlStr = dom.serialize()
             fs.writeFileSync(htmlPath, optimizedHtmlStr)
         })
         log('fixed callout styles')
+    }
+
+    static #injectCss() {
+        const injectCssPath = path.join(process.cwd(), 'notionBackup', 'inject.css')
+        const injectCssStr = fs.readFileSync(injectCssPath, 'utf8')
+
+        assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
+        const htmlPaths = Utils.osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
+        htmlPaths.forEach((htmlPath) => {
+            const htmlStr = fs.readFileSync(htmlPath, 'utf8')
+
+            const dom = new jsdom.JSDOM(htmlStr)
+            const styleElem = dom.window.document.querySelector('style')
+            const styleContent = styleElem.innerHTML
+            assert(styleContent)
+
+            const newStyleContent = styleContent + '\n\n' + injectCssStr
+            styleElem.innerHTML = newStyleContent
+
+            const newHtmlStr = dom.serialize()
+            fs.writeFileSync(htmlPath, newHtmlStr)
+        })
+
+        log('injected custom css')
     }
 
     static #format() {
@@ -262,6 +306,8 @@ class NotionBackup {
                 parser: 'html',
                 tabWidth: 4,
                 printWidth: 160,
+                htmlWhitespaceSensitivity: 'ignore',
+                bracketSameLine: true,
             }
             const prettyHtmlStr = prettier.format(uglyHtmlStr, prettierConfig)
             fs.writeFileSync(htmlPath, prettyHtmlStr)
@@ -279,6 +325,7 @@ class NotionBackup {
         if (ArgParser.getArgs().style) {
             NotionBackup.#fixLinks()
             NotionBackup.#fixCallouts()
+            NotionBackup.#injectCss()
         }
 
         NotionBackup.#format()
