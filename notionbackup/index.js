@@ -2,7 +2,10 @@ import { log } from 'console'
 import { ArgumentParser } from 'argparse'
 import * as fs from 'fs'
 import * as path from 'path'
-import { extractZip } from 'extract-zip'
+import AdmZip from 'adm-zip'
+import jsdom from 'jsdom'
+import css from 'css'
+import prettier from 'prettier'
 
 const perror = (message) => {
     assert(message && typeof message === 'string')
@@ -14,6 +17,16 @@ const perror = (message) => {
 const assert = (assertion) => {
     if (!assertion) {
         perror('assertion failed')
+    }
+}
+
+class Utils {
+    static osWalk(dirPath) {
+        assert(dirPath && typeof dirPath === 'string')
+        const children = fs.readdirSync(dirPath).map((child) => path.join(dirPath, child))
+        const subDirs = children.filter((child) => fs.statSync(child).isDirectory())
+        const subFiles = children.filter((child) => fs.statSync(child).isFile())
+        return [...subFiles, ...subDirs.map((s) => Utils.osWalk(s)).flat()]
     }
 }
 
@@ -37,17 +50,13 @@ class ArgParser {
 
     static parseArgs() {
         const parser = new ArgumentParser({ description: 'notion html export deobfuscator' })
-        parser.add_argument('-s', '--style', { help: 'overwrite styling with custom css', action: 'store_true' })
+        parser.add_argument('-o', '--optimize', { help: 'remove redundancy in html files', action: 'store_true' })
         parser.add_argument('input', { help: 'path to zip file containing the html export' })
         const args = parser.parse_args()
 
         assert(args.input && typeof args.input === 'string')
         ArgParser.#validateInputPath(args.input)
         args.input = path.resolve(args.input)
-
-        if (args.style) {
-            perror('feature is not implemented yet')
-        }
 
         ArgParser.#args = args
     }
@@ -65,14 +74,11 @@ class NotionBackup {
 
         const innerDirName = path.basename(ArgParser.getArgs().input).replace('.zip', '')
         const innerDirPath = path.join(outerDirPath, innerDirName)
-        if (fs.existsSync(innerDirPath)) {
-            log('cleaning up exisitng files in output directory')
-        }
         fs.rmSync(innerDirPath, { recursive: true, force: true })
         fs.mkdirSync(innerDirPath)
 
         NotionBackup.#outputDirPath = innerDirPath
-        log('initialized output directory')
+        log('initialized fresh output directory')
     }
 
     static #copyToOutputDir() {
@@ -84,23 +90,128 @@ class NotionBackup {
         log('copied input file to output directory')
     }
 
-    static async #unzip() {
+    static #unzip() {
         assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
 
         const src = path.join(NotionBackup.#outputDirPath, path.basename(ArgParser.getArgs().input))
         const dst = NotionBackup.#outputDirPath
-        await extractZip(src, { dir: dst })
+        const zip = new AdmZip(src)
+        zip.extractAllTo(dst)
+        fs.rmSync(src)
+        log('unzipped input file')
     }
 
-    static async run() {
+    static #fixPreWrap() {
+        const getFixedHtmlStr = (htmlStr) => {
+            assert(htmlStr && typeof htmlStr === 'string')
+
+            const dom = new jsdom.JSDOM(htmlStr)
+            const styleElem = dom.window.document.querySelector('style')
+            const styleContent = styleElem.innerHTML
+            assert(styleContent)
+
+            /*
+            body {
+                line-height: 1.5;
+                white-space: pre-wrap; ⬅ change to 'normal'
+            }
+            */
+            const cssObj = css.parse(styleContent)
+            const isBodyRule = (rule) => rule.type === 'rule' && rule.selectors.includes('body') && rule.selectors.length === 1
+            const numBodyRules = cssObj.stylesheet.rules.filter((rule) => isBodyRule(rule)).length
+            if (numBodyRules !== 1) {
+                perror('html does not match the expected format')
+            }
+            cssObj.stylesheet.rules
+                .filter((rule) => isBodyRule(rule))
+                .forEach((rule) => {
+                    rule.declarations.forEach((declaration) => {
+                        if (declaration.property === 'white-space') {
+                            declaration.value = 'normal'
+                        }
+                    })
+                })
+
+            const newStyleContent = css.stringify(cssObj)
+            styleElem.innerHTML = newStyleContent
+            return dom.serialize()
+        }
+
+        assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
+        const htmlPaths = Utils.osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
+        htmlPaths.forEach((htmlPath) => {
+            const brokenHtmlStr = fs.readFileSync(htmlPath, 'utf8')
+            const fixedHtmlStr = getFixedHtmlStr(brokenHtmlStr)
+            fs.writeFileSync(htmlPath, fixedHtmlStr)
+        })
+        log('fixed pre-wrap in html files')
+    }
+
+    static #optimize() {
+        assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
+        const htmlPaths = Utils.osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
+
+        const removeIds = (htmlStr) => {
+            assert(htmlStr && typeof htmlStr === 'string')
+            const dom = new jsdom.JSDOM(htmlStr)
+            const elems = dom.window.document.querySelectorAll('*')
+            Array.from(elems).map((elem) => elem.removeAttribute('id'))
+            return dom.serialize()
+        }
+
+        htmlPaths.forEach((htmlPath) => {
+            const htmlStr = fs.readFileSync(htmlPath, 'utf8')
+            const optimization1 = removeIds(htmlStr)
+            log('removed ids in html files')
+
+            fs.writeFileSync(htmlPath, optimization1)
+        })
+    }
+
+    static #format() {
+        assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
+        const htmlPaths = Utils.osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
+
+        htmlPaths.forEach((htmlPath) => {
+            const uglyHtmlStr = fs.readFileSync(htmlPath, 'utf8')
+            const prettierConfig = {
+                parser: 'html',
+                tabWidth: 4,
+                printWidth: 160,
+            }
+            const prettyHtmlStr = prettier.format(uglyHtmlStr, prettierConfig)
+            fs.writeFileSync(htmlPath, prettyHtmlStr)
+        })
+        log('formatted html files')
+    }
+
+    static run() {
         NotionBackup.#initOutputDir()
         NotionBackup.#copyToOutputDir()
-        await NotionBackup.#unzip()
+        NotionBackup.#unzip()
+        NotionBackup.#fixPreWrap()
+
+        if (ArgParser.getArgs().optimize) {
+            NotionBackup.#optimize()
+        }
+
+        NotionBackup.#format()
     }
 }
 
-async function main() {
+const BANNER =
+    '    _   __      __  _                ____             __\n' +
+    '   / | / /___  / /_(_)___  ____     / __ )____ ______/ /____  ______\n' +
+    '  /  |/ / __ \\/ __/ / __ \\/ __ \\   / __  / __ `/ ___/ //_/ / / / __ \\\n' +
+    ' / /|  / /_/ / /_/ / /_/ / / / /  / /_/ / /_/ / /__/ ,< / /_/ / /_/ /\n' +
+    '/_/ |_/\\____/\\__/_/\\____/_/ /_/  /_____/\\__,_/\\___/_/|_|\\__,_/ .___/\n' +
+    '                                                            /_/'
+function main() {
+    // log(BANNER)
     ArgParser.parseArgs()
-    await NotionBackup.run()
+    NotionBackup.run()
+
+    // todo: make sure zip files arent corrupted
+    // todo: present project in reddit
 }
 main()

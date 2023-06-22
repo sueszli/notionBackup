@@ -1,7 +1,10 @@
 {
     "type": "module",
     "dependencies": {
+        "adm-zip": "^0.5.10",
         "argparse": "^2.0.1",
-        "extract-zip": "^2.0.1"
+        "css": "^3.0.0",
+        "jsdom": "^22.1.0",
+        "prettier": "^2.8.8"
     }
 }
