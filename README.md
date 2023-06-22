@@ -14,7 +14,7 @@ The HTML files exported through Notion are minified and therefore not editable. 
 
 <br>
 
-Just run the following bash script:
+Run the bash script below to get started:
 
 ```bash
 # clone
@@ -26,8 +26,10 @@ npm install
 clear
 
 # run
-node index.js --help
+node notionbackup --help
 
 # example usage
-node index.js ./demo/blog.zip
+node notionbackup ./demo/blog.zip
 ```
+
+This project is a work in progress. Feel free to contribute or open an issue.
