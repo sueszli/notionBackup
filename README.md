@@ -18,9 +18,9 @@ Notion's HTML exports are minified and obfuscated – just look at this mess:
 
 This project fixes just that and additionally makes the pages prettier by adding some styling.
 
-<br>
+<br><br>
 
-## How to use
+## Install
 
 Run the bash script below to get started:
 
