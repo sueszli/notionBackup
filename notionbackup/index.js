@@ -165,20 +165,22 @@ class NotionBackup {
             const dom = new jsdom.JSDOM(htmlStr)
             const elems = dom.window.document.querySelectorAll('*')
 
-            elems.forEach((elem) => {
-                const hasClassAttr = elem.hasAttribute('class')
-                if (!hasClassAttr) {
-                    return
-                }
+            Array.from(elems)
+                .filter((elem) => elem.hasAttribute('class'))
+                .elems.forEach((elem) => {
+                    const hasClassAttr = elem.hasAttribute('class')
+                    if (!hasClassAttr) {
+                        return
+                    }
 
-                const classAttrList = elem
-                    .getAttribute('class')
-                    .split(' ')
-                    .filter((s) => s.trim())
-                if (classAttrList.length === 0) {
-                    elem.removeAttribute('class')
-                }
-            })
+                    const classAttrList = elem
+                        .getAttribute('class')
+                        .split(' ')
+                        .filter((s) => s.trim())
+                    if (classAttrList.length === 0) {
+                        elem.removeAttribute('class')
+                    }
+                })
 
             log(dom.serialize())
             fs.writeFileSync(htmlPath, dom.serialize())
