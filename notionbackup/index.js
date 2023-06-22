@@ -144,28 +144,46 @@ class NotionBackup {
             const fixedHtmlStr = getFixedHtmlStr(brokenHtmlStr)
             fs.writeFileSync(htmlPath, fixedHtmlStr)
         })
-        log('fixed pre-wrap in html files')
+        log("set pre-wrap to 'normal' in css")
     }
 
     static #optimize() {
         assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
         const htmlPaths = Utils.osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
 
-        const removeIds = (htmlStr) => {
-            assert(htmlStr && typeof htmlStr === 'string')
+        htmlPaths.forEach((htmlPath) => {
+            const htmlStr = fs.readFileSync(htmlPath, 'utf8')
             const dom = new jsdom.JSDOM(htmlStr)
             const elems = dom.window.document.querySelectorAll('*')
-            Array.from(elems).map((elem) => elem.removeAttribute('id'))
-            return dom.serialize()
-        }
+            elems.forEach((elem) => elem.removeAttribute('id'))
+            fs.writeFileSync(htmlPath, dom.serialize())
+        })
+        log('removed ids in html elements')
 
         htmlPaths.forEach((htmlPath) => {
             const htmlStr = fs.readFileSync(htmlPath, 'utf8')
-            const optimization1 = removeIds(htmlStr)
-            log('removed ids in html files')
+            const dom = new jsdom.JSDOM(htmlStr)
+            const elems = dom.window.document.querySelectorAll('*')
 
-            fs.writeFileSync(htmlPath, optimization1)
+            elems.forEach((elem) => {
+                const hasClassAttr = elem.hasAttribute('class')
+                if (!hasClassAttr) {
+                    return
+                }
+
+                const classAttrList = elem
+                    .getAttribute('class')
+                    .split(' ')
+                    .filter((s) => s.trim())
+                if (classAttrList.length === 0) {
+                    elem.removeAttribute('class')
+                }
+            })
+
+            log(dom.serialize())
+            fs.writeFileSync(htmlPath, dom.serialize())
         })
+        log('removed ids in html elements')
     }
 
     static #format() {
@@ -191,6 +209,8 @@ class NotionBackup {
         NotionBackup.#unzip()
         NotionBackup.#fixPreWrap()
 
+        NotionBackup.#format() // remove this
+
         if (ArgParser.getArgs().optimize) {
             NotionBackup.#optimize()
         }
@@ -212,6 +232,6 @@ function main() {
     NotionBackup.run()
 
     // todo: make sure zip files arent corrupted
-    // todo: present project in reddit
+    // todo: advertise project on reddit, hackernews etc.
 }
 main()
