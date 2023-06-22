@@ -51,7 +51,6 @@ class ArgParser {
 
     static parseArgs() {
         const parser = new ArgumentParser({ description: 'notion html export deobfuscator' })
-        parser.add_argument('-s', '--style', { help: 'make output prettier', action: 'store_true' })
         parser.add_argument('input', { help: 'path to zip file containing the html export' })
         const args = parser.parse_args()
 
@@ -118,13 +117,13 @@ class NotionBackup {
             }
             */
             const cssObj = css.parse(styleContent)
-            const isBodyRule = (rule) => rule.type === 'rule' && rule.selectors.includes('body') && rule.selectors.length === 1
-            const numBodyRules = cssObj.stylesheet.rules.filter((rule) => isBodyRule(rule)).length
+            const isBodyExclusiveRule = (rule) => rule.type === 'rule' && rule.selectors.includes('body') && rule.selectors.length === 1
+            const numBodyRules = cssObj.stylesheet.rules.filter((rule) => isBodyExclusiveRule(rule)).length
             if (numBodyRules !== 1) {
                 perror('html does not match the expected format')
             }
             cssObj.stylesheet.rules
-                .filter((rule) => isBodyRule(rule))
+                .filter((rule) => isBodyExclusiveRule(rule))
                 .forEach((rule) => {
                     rule.declarations.forEach((declaration) => {
                         if (declaration.property === 'white-space') {
@@ -146,36 +145,6 @@ class NotionBackup {
             fs.writeFileSync(htmlPath, fixedHtmlStr)
         })
         log("set pre-wrap to 'normal' in css")
-    }
-
-    static #optimizeHtml() {
-        assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
-        const htmlPaths = Utils.osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
-
-        htmlPaths.forEach((htmlPath) => {
-            const htmlStr = fs.readFileSync(htmlPath, 'utf8')
-            const dom = new jsdom.JSDOM(htmlStr)
-            const elems = dom.window.document.querySelectorAll('*')
-
-            // remove ids
-            elems.forEach((elem) => elem.removeAttribute('id'))
-
-            // remove empty class attributes
-            Array.from(elems)
-                .filter((elem) => elem.hasAttribute('class'))
-                .filter((elem) => {
-                    const classList = elem
-                        .getAttribute('class')
-                        .split(' ')
-                        .filter((s) => s.trim())
-                    return classList.length === 0
-                })
-                .forEach((elem) => elem.removeAttribute('class'))
-
-            const optimizedHtmlStr = dom.serialize()
-            fs.writeFileSync(htmlPath, optimizedHtmlStr)
-        })
-        log('removed ids and empty class attributes in html elements')
     }
 
     static #fixLinks() {
@@ -218,6 +187,75 @@ class NotionBackup {
             fs.writeFileSync(htmlPath, optimizedHtmlStr)
         })
         log('updated attachment links to the filename')
+    }
+
+    static #fixCode() {
+        assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
+        const htmlPaths = Utils.osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
+
+        htmlPaths.forEach((htmlPath) => {
+            const htmlStr = fs.readFileSync(htmlPath, 'utf8')
+            const dom = new jsdom.JSDOM(htmlStr)
+            const styleElem = dom.window.document.querySelector('style')
+            const styleContent = styleElem.innerHTML
+            assert(styleContent)
+
+            const cssObj = css.parse(styleContent)
+            const sMatch = ['.code', 'code']
+            const codeRules = cssObj.stylesheet.rules
+                .filter((rule) => rule.type === 'rule')
+                .filter((rule) => rule.selectors.length === sMatch.length && rule.selectors.every((selector) => sMatch.includes(selector)))
+            if (codeRules.length !== 1) {
+                perror('html does not match the expected format')
+            }
+            codeRules.forEach((rule) => {
+                rule.declarations.forEach((declaration) => {
+                    if (declaration.property === 'font-size') {
+                        declaration.value = '100%'
+                    }
+                })
+            })
+
+            const newStyleContent = css.stringify(cssObj)
+            styleElem.innerHTML = newStyleContent
+            const newHtmlStr = dom.serialize()
+            fs.writeFileSync(htmlPath, newHtmlStr)
+        })
+        log('fixed font size of code blocks')
+    }
+
+    static #fixBlockQuotes() {
+        assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
+        const htmlPaths = Utils.osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
+
+        htmlPaths.forEach((htmlPath) => {
+            const htmlStr = fs.readFileSync(htmlPath, 'utf8')
+            const dom = new jsdom.JSDOM(htmlStr)
+            const styleElem = dom.window.document.querySelector('style')
+            const styleContent = styleElem.innerHTML
+            assert(styleContent)
+
+            const cssObj = css.parse(styleContent)
+            const blockQuoteRules = cssObj.stylesheet.rules
+                .filter((rule) => rule.type === 'rule')
+                .filter((rule) => rule.selectors.length === 1 && rule.selectors[0] === 'blockquote')
+            if (blockQuoteRules.length !== 1) {
+                perror('html does not match the expected format')
+            }
+            blockQuoteRules.forEach((rule) => {
+                rule.declarations.forEach((declaration) => {
+                    if (declaration.property === 'font-size') {
+                        declaration.value = '100%'
+                    }
+                })
+            })
+
+            const newStyleContent = css.stringify(cssObj)
+            styleElem.innerHTML = newStyleContent
+            const newHtmlStr = dom.serialize()
+            fs.writeFileSync(htmlPath, newHtmlStr)
+        })
+        log('fixed font size of block quotes')
     }
 
     static #fixCallouts() {
@@ -296,6 +334,36 @@ class NotionBackup {
         log('injected custom css')
     }
 
+    static #optimizeHtml() {
+        assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
+        const htmlPaths = Utils.osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
+
+        htmlPaths.forEach((htmlPath) => {
+            const htmlStr = fs.readFileSync(htmlPath, 'utf8')
+            const dom = new jsdom.JSDOM(htmlStr)
+            const elems = dom.window.document.querySelectorAll('*')
+
+            // remove ids
+            elems.forEach((elem) => elem.removeAttribute('id'))
+
+            // remove empty class attributes
+            Array.from(elems)
+                .filter((elem) => elem.hasAttribute('class'))
+                .filter((elem) => {
+                    const classList = elem
+                        .getAttribute('class')
+                        .split(' ')
+                        .filter((s) => s.trim())
+                    return classList.length === 0
+                })
+                .forEach((elem) => elem.removeAttribute('class'))
+
+            const optimizedHtmlStr = dom.serialize()
+            fs.writeFileSync(htmlPath, optimizedHtmlStr)
+        })
+        log('removed ids and empty class attributes in html elements')
+    }
+
     static #format() {
         assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
         const htmlPaths = Utils.osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
@@ -319,15 +387,15 @@ class NotionBackup {
         NotionBackup.#initOutputDir()
         NotionBackup.#copyToOutputDir()
         NotionBackup.#unzip()
+
         NotionBackup.#fixPreWrap()
+        NotionBackup.#fixLinks()
+        NotionBackup.#fixCode()
+        NotionBackup.#fixBlockQuotes()
+        NotionBackup.#fixCallouts()
+
+        NotionBackup.#injectCss()
         NotionBackup.#optimizeHtml()
-
-        if (ArgParser.getArgs().style) {
-            NotionBackup.#fixLinks()
-            NotionBackup.#fixCallouts()
-            NotionBackup.#injectCss()
-        }
-
         NotionBackup.#format()
     }
 }

@@ -30,7 +30,7 @@ clear
 node notionbackup --help
 
 # example usage
-node notionbackup -s ./demo/blog.zip
+node notionbackup ./demo/blog.zip
 ```
 
 This project is a work in progress. Feel free to contribute or open an issue.
