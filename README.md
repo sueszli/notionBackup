@@ -12,9 +12,7 @@ Turn your exported files into editable and visually appealing pages – keep the
 
 Notion's HTML exports are minified and obfuscated – just look at this mess:
 
-<div style="margin-left: 3rem;">
-    <img width="1100" alt="obfuscated" src="https://github.com/sueszli/notionBackup/assets/61852663/7cb89455-db54-446f-a557-651470c9d629">
-</div>
+<img alt="obfuscated" src="https://github.com/sueszli/notionBackup/assets/61852663/7cb89455-db54-446f-a557-651470c9d629">
 
 This project fixes just that and additionally makes the pages prettier by adding some styling.
 
