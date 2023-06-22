@@ -4,7 +4,6 @@ import * as fs from 'fs'
 import * as path from 'path'
 import AdmZip from 'adm-zip'
 import jsdom from 'jsdom'
-import css from 'css'
 import prettier from 'prettier'
 
 const perror = (message) => {
@@ -28,15 +27,6 @@ class Utils {
         const subDirs = children.filter((child) => fs.statSync(child).isDirectory())
         const subFiles = children.filter((child) => fs.statSync(child).isFile())
         return [...subFiles, ...subDirs.map((s) => Utils.osWalk(s)).flat()]
-    }
-
-    static getHtmlElementClassList(elem) {
-        assert(elem && elem.hasAttribute('class'))
-        const classList = elem
-            .getAttribute('class')
-            .split(' ')
-            .filter((s) => s.trim())
-        return classList
     }
 }
 
@@ -110,20 +100,41 @@ class NotionBackup {
         log('unzipped input file')
     }
 
-    static #fixLinks() {
+    static #fix() {
         assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
         const htmlPaths = Utils.osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
 
-        htmlPaths.forEach((htmlPath) => {
+        const injectCssPath = path.join(process.cwd(), 'notionBackup', 'inject.css')
+        const injectCssStr = fs.readFileSync(injectCssPath, 'utf8')
+
+        const getHtmlElementClassList = (elem) => {
+            assert(elem && elem.hasAttribute('class'))
+            const classList = elem
+                .getAttribute('class')
+                .split(' ')
+                .filter((s) => s.trim())
+            return classList
+        }
+
+        const promises = htmlPaths.map((htmlPath) => {
             const htmlStr = fs.readFileSync(htmlPath, 'utf8')
             const dom = new jsdom.JSDOM(htmlStr)
             const elems = dom.window.document.querySelectorAll('*')
 
+            // remove ids
+            elems.forEach((elem) => elem.removeAttribute('id'))
+
+            // remove empty class attributes
+            Array.from(elems)
+                .filter((elem) => elem.hasAttribute('class'))
+                .filter((elem) => getHtmlElementClassList(elem).length === 0)
+                .forEach((elem) => elem.removeAttribute('class'))
+
+            // fix anchors
             const anchorWrappers = Array.from(elems)
                 .filter((elem) => elem.hasAttribute('class'))
-                .filter((elem) => Utils.getHtmlElementClassList(elem).includes('source'))
+                .filter((elem) => getHtmlElementClassList(elem).includes('source'))
             const anchors = anchorWrappers.map((wrapper) => wrapper.querySelector('a')).filter((anchor) => anchor)
-
             anchors.forEach((anchor) => {
                 const hasHref = anchor.hasAttribute('href')
                 if (!hasHref || !anchor.getAttribute('href')) {
@@ -139,76 +150,33 @@ class NotionBackup {
                 anchor.textContent = filename
             })
 
-            const optimizedHtmlStr = dom.serialize()
-            fs.writeFileSync(htmlPath, optimizedHtmlStr)
-        })
-        log('changed descriptions of attachments from path to filename')
-    }
-
-    static #injectCss() {
-        const injectCssPath = path.join(process.cwd(), 'notionBackup', 'inject.css')
-        const injectCssStr = fs.readFileSync(injectCssPath, 'utf8')
-
-        assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
-        const htmlPaths = Utils.osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
-        htmlPaths.forEach((htmlPath) => {
-            const htmlStr = fs.readFileSync(htmlPath, 'utf8')
-
-            const dom = new jsdom.JSDOM(htmlStr)
+            // add css injection
             const styleElem = dom.window.document.querySelector('style')
-            const styleContent = styleElem.innerHTML
-            assert(styleContent)
-
-            const newStyleContent = styleContent + '\n\n' + injectCssStr
-            styleElem.innerHTML = newStyleContent
-
-            const newHtmlStr = dom.serialize()
-            fs.writeFileSync(htmlPath, newHtmlStr)
-        })
-        log('injected custom css')
-    }
-
-    static #optimizeHtml() {
-        assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
-        const htmlPaths = Utils.osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
-
-        htmlPaths.forEach((htmlPath) => {
-            const htmlStr = fs.readFileSync(htmlPath, 'utf8')
-            const dom = new jsdom.JSDOM(htmlStr)
-            const elems = dom.window.document.querySelectorAll('*')
-
-            // remove ids
-            elems.forEach((elem) => elem.removeAttribute('id'))
-
-            // remove empty class attributes
-            Array.from(elems)
-                .filter((elem) => elem.hasAttribute('class'))
-                .filter((elem) => Utils.getHtmlElementClassList(elem).length === 0)
-                .forEach((elem) => elem.removeAttribute('class'))
+            styleElem.innerHTML = styleElem.innerHTML + '\n\n' + injectCssStr
 
             const optimizedHtmlStr = dom.serialize()
             fs.writeFileSync(htmlPath, optimizedHtmlStr)
         })
-        log('removed ids and empty class attributes in html elements')
+        Promise.all(promises)
+        log('updated files')
     }
 
     static #format() {
-        const CONFIG = {
-            parser: 'html',
-            tabWidth: 4,
-            printWidth: 160,
-            htmlWhitespaceSensitivity: 'ignore',
-            bracketSameLine: true,
-        }
-
         assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
         const htmlPaths = Utils.osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
 
-        htmlPaths.forEach((htmlPath) => {
+        const promises = htmlPaths.map((htmlPath) => {
             const uglyHtmlStr = fs.readFileSync(htmlPath, 'utf8')
-            const prettyHtmlStr = prettier.format(uglyHtmlStr, CONFIG)
+            const prettyHtmlStr = prettier.format(uglyHtmlStr, {
+                parser: 'html',
+                tabWidth: 4,
+                printWidth: 160,
+                htmlWhitespaceSensitivity: 'ignore',
+                bracketSameLine: true,
+            })
             fs.writeFileSync(htmlPath, prettyHtmlStr)
         })
+        Promise.all(promises)
         log('formatted html files')
     }
 
@@ -216,10 +184,7 @@ class NotionBackup {
         NotionBackup.#initOutputDir()
         NotionBackup.#copyToOutputDir()
         NotionBackup.#unzip()
-        NotionBackup.#fixLinks()
-
-        NotionBackup.#injectCss()
-        NotionBackup.#optimizeHtml()
+        NotionBackup.#fix()
         NotionBackup.#format()
     }
 }
