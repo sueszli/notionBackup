@@ -130,7 +130,7 @@ class NotionBackup {
                 .filter((elem) => getHtmlElementClassList(elem).length === 0)
                 .forEach((elem) => elem.removeAttribute('class'))
 
-            // fix anchors
+            // fix attachment links
             const anchorWrappers = Array.from(elems)
                 .filter((elem) => elem.hasAttribute('class'))
                 .filter((elem) => getHtmlElementClassList(elem).includes('source'))
