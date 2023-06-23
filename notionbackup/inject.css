@@ -4,6 +4,10 @@ body {
     white-space: normal !important;
 }
 
+p {
+    min-height: 1em !important;
+}
+
 .code,
 code {
     font-size: 100% !important;
@@ -22,4 +26,8 @@ blockquote {
 
 .source:not(.bookmark) {
     font-size: 100% !important;
+}
+
+p {
+    min-height: 1em !important;
 }
