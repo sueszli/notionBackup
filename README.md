@@ -12,7 +12,7 @@ Turn your exported files into editable and visually appealing pages – keep the
 
 <img alt="obfuscated" src="https://github.com/sueszli/notionBackup/assets/61852663/7cb89455-db54-446f-a557-651470c9d629">
 
-With this project you'll never have to deal with obfuscated Notion exports again.
+With this project you'll never have to deal with obfuscated Notion exports again!
 
 <br><br>
 
