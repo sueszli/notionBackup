@@ -4,26 +4,13 @@ import { ArgumentParser } from 'argparse'
 import * as fs from 'fs'
 import * as path from 'path'
 import AdmZip from 'adm-zip'
-import jsdom from 'jsdom'
-import prettier from 'prettier'
-
-const osWalkHtml = (dirPath) => {
-    assert(dirPath && typeof dirPath === 'string')
-    assert(fs.statSync(dirPath).isDirectory())
-    const children = fs.readdirSync(dirPath).map((child) => path.join(dirPath, child))
-    const subDirs = children.filter((child) => fs.statSync(child).isDirectory())
-    const subFiles = children.filter((child) => fs.statSync(child).isFile())
-
-    const recursiveSubFiles = subDirs.map((s) => osWalkHtml(s)).flat()
-    const files = [...subFiles, ...recursiveSubFiles]
-    return files.filter((filePath) => filePath.endsWith('.html'))
-}
+import Piscina from 'piscina'
 
 class ArgParser {
     static #args = null
 
     static getArgs() {
-        assert(ArgParser.#args)
+        assert(ArgParser.#args && typeof ArgParser.#args === 'object')
         return ArgParser.#args
     }
 
@@ -50,8 +37,13 @@ class ArgParser {
     }
 }
 
-class NotionBackup {
+class FileManager {
     static #outputDirPath = null
+
+    static getOutputDirPath() {
+        assert(FileManager.#outputDirPath && typeof FileManager.#outputDirPath === 'string')
+        return FileManager.#outputDirPath
+    }
 
     static #initOutputDir() {
         const outerDirName = 'output'
@@ -65,116 +57,53 @@ class NotionBackup {
         fs.rmSync(innerDirPath, { recursive: true, force: true })
         fs.mkdirSync(innerDirPath)
 
-        NotionBackup.#outputDirPath = innerDirPath
-        log('initialized fresh output directory')
+        FileManager.#outputDirPath = innerDirPath
     }
 
     static #copyToOutputDir() {
-        assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
-
         const src = ArgParser.getArgs().input
-        const dst = path.join(NotionBackup.#outputDirPath, path.basename(src))
+        const dst = path.join(FileManager.getOutputDirPath(), path.basename(src))
         fs.copyFileSync(src, dst)
-        log('copied input file to output directory')
     }
 
     static #unzip() {
-        assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
-
-        const src = path.join(NotionBackup.#outputDirPath, path.basename(ArgParser.getArgs().input))
-        const dst = NotionBackup.#outputDirPath
+        const src = path.join(FileManager.getOutputDirPath(), path.basename(ArgParser.getArgs().input))
+        const dst = FileManager.getOutputDirPath()
         const zip = new AdmZip(src)
         zip.extractAllTo(dst)
         fs.rmSync(src)
-        log('unzipped input file')
     }
 
-    static #fix() {
-        assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
-        const htmlPaths = osWalkHtml(NotionBackup.#outputDirPath)
+    static init() {
+        FileManager.#initOutputDir()
+        FileManager.#copyToOutputDir()
+        FileManager.#unzip()
+    }
+}
 
-        const injectCssPath = path.join(process.cwd(), 'notionbackup', 'injection', 'inject.css')
-        const injectCssStr = fs.readFileSync(injectCssPath, 'utf8')
+class NotionBackup {
+    static #getHtmlFiles = (dirPath) => {
+        assert(dirPath && typeof dirPath === 'string')
+        assert(fs.statSync(dirPath).isDirectory())
+        const children = fs.readdirSync(dirPath).map((child) => path.join(dirPath, child))
+        const subDirs = children.filter((child) => fs.statSync(child).isDirectory())
+        const subFiles = children.filter((child) => fs.statSync(child).isFile())
 
-        const getHtmlElementClassList = (elem) => {
-            assert(elem && elem.hasAttribute('class'))
-            const classList = elem
-                .getAttribute('class')
-                .split(' ')
-                .filter((s) => s.trim())
-            return classList
-        }
+        const recursiveSubFiles = subDirs.map((s) => NotionBackup.#getHtmlFiles(s)).flat()
+        const files = [...subFiles, ...recursiveSubFiles]
+        return files.filter((filePath) => filePath.endsWith('.html'))
+    }
 
+    static async run() {
+        const workerPath = path.join(process.cwd(), 'notionbackup', 'worker.js')
+        const workerPool = new Piscina({ filename: workerPath })
+
+        const htmlPaths = NotionBackup.#getHtmlFiles(FileManager.getOutputDirPath())
         const promises = htmlPaths.map((htmlPath) => {
-            const htmlStr = fs.readFileSync(htmlPath, 'utf8')
-            const dom = new jsdom.JSDOM(htmlStr)
-            const elems = dom.window.document.querySelectorAll('*')
-
-            // remove ids
-            elems.forEach((elem) => elem.removeAttribute('id'))
-
-            // remove empty class attributes
-            Array.from(elems)
-                .filter((elem) => elem.hasAttribute('class'))
-                .filter((elem) => getHtmlElementClassList(elem).length === 0)
-                .forEach((elem) => elem.removeAttribute('class'))
-
-            // fix attachment links
-            const anchorWrappers = Array.from(elems)
-                .filter((elem) => elem.hasAttribute('class'))
-                .filter((elem) => getHtmlElementClassList(elem).includes('source'))
-            const anchors = anchorWrappers.map((wrapper) => wrapper.querySelector('a')).filter((anchor) => anchor)
-            anchors.forEach((anchor) => {
-                const hasHref = anchor.hasAttribute('href')
-                if (!hasHref || !anchor.getAttribute('href')) {
-                    log('found anchor block without href / with external href in :', htmlPath)
-                    return
-                }
-                const link = anchor.getAttribute('href')
-                if (link.startsWith('http')) {
-                    log('found external link in :', htmlPath)
-                    return
-                }
-                const filename = path.basename(link)
-                anchor.textContent = filename
-            })
-
-            // add css injection
-            const styleElem = dom.window.document.querySelector('style')
-            styleElem.innerHTML = styleElem.innerHTML + '\n\n' + injectCssStr
-
-            const optimizedHtmlStr = dom.serialize()
-            fs.writeFileSync(htmlPath, optimizedHtmlStr)
+            return workerPool.run({ htmlPath })
         })
-        Promise.all(promises)
-        log('updated files')
-    }
-
-    static #format() {
-        assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
-        const htmlPaths = osWalkHtml(NotionBackup.#outputDirPath)
-
-        const promises = htmlPaths.map((htmlPath) => {
-            const uglyHtmlStr = fs.readFileSync(htmlPath, 'utf8')
-            const prettyHtmlStr = prettier.format(uglyHtmlStr, {
-                parser: 'html',
-                tabWidth: 4,
-                printWidth: 160,
-                htmlWhitespaceSensitivity: 'ignore',
-                bracketSameLine: true,
-            })
-            fs.writeFileSync(htmlPath, prettyHtmlStr)
-        })
-        Promise.all(promises)
-        log('formatted html files')
-    }
-
-    static run() {
-        NotionBackup.#initOutputDir()
-        NotionBackup.#copyToOutputDir()
-        NotionBackup.#unzip()
-        NotionBackup.#fix()
-        NotionBackup.#format()
+        await Promise.all(promises)
+        workerPool.destroy()
     }
 }
 
@@ -185,10 +114,16 @@ const BANNER =
     ' / /|  / /_/ / /_/ / /_/ / / / /  / /_/ / /_/ / /__/ ,< / /_/ / /_/ /\n' +
     '/_/ |_/\\____/\\__/_/\\____/_/ /_/  /_____/\\__,_/\\___/_/|_|\\__,_/ .___/\n' +
     '                                                            /_/'
-function main() {
+async function main() {
     console.clear()
     log(BANNER)
+
+    console.time('execution time')
     ArgParser.parseArgs()
-    NotionBackup.run()
+    FileManager.init()
+    log('initialized output directory')
+
+    await NotionBackup.run()
+    console.timeEnd('execution time')
 }
-main()
+await main()
