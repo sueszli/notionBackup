@@ -27,7 +27,3 @@ blockquote {
 .source:not(.bookmark) {
     font-size: 100% !important;
 }
-
-p {
-    min-height: 1em !important;
-}

@@ -1,0 +1,629 @@
+<html class="notion-html">
+    <head lang="en">
+        <meta charset="utf-8" />
+        <meta content="width=device-width,height=device-height,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" name="viewport" />
+        <title>empty page</title>
+        <meta content="en_US" property="og:locale" />
+        <link href="/images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <link href="/images/logo-ios.png" rel="apple-touch-icon" />
+        <meta content="yes" name="apple-mobile-web-app-capable" />
+        <meta content="telephone=no" name="format-detection" />
+        <meta content="no" name="msapplication-tap-highlight" />
+
+        <link href="assets/original print.css" media="print" rel="stylesheet" />
+        <link href="assets/notionsnapshot injection.css" rel="stylesheet" />
+        <link href="assets/original default view.css" rel="stylesheet" />
+    </head>
+    <body class="notion-body dark">
+        <style>
+            body {
+                background: #fff;
+            }
+            body.dark {
+                background: #191919;
+            }
+            @keyframes startup-shimmer-animation {
+                0% {
+                    transform: translateX(-100%) translateZ(0);
+                }
+                100% {
+                    transform: translateX(100%) translateZ(0);
+                }
+            }
+            @keyframes startup-shimmer-fade-in {
+                0% {
+                    opacity: 0;
+                }
+                100% {
+                    opacity: 1;
+                }
+            }
+            @keyframes startup-spinner-rotate {
+                0% {
+                    transform: rotate(0) translateZ(0);
+                }
+                100% {
+                    transform: rotate(360deg) translateZ(0);
+                }
+            }
+            #initial-loading-spinner {
+                position: fixed;
+                height: 100vh;
+                width: 100vw;
+                z-index: -1;
+                display: none;
+                align-items: center;
+                justify-content: center;
+                opacity: 0.5;
+            }
+            #initial-loading-spinner svg {
+                height: 24px;
+                width: 24px;
+                animation: startup-spinner-rotate 1s linear infinite;
+                transform-origin: center center;
+                pointer-events: none;
+            }
+            #skeleton {
+                background: #fff;
+                position: fixed;
+                height: 100vh;
+                width: 100vw;
+                z-index: -1;
+                display: none;
+                overflow: hidden;
+            }
+            #initial-loading-spinner.show,
+            #skeleton.show {
+                display: flex;
+            }
+            body.dark #skeleton {
+                background: #191919;
+            }
+            .notion-front-page #skeleton,
+            .notion-mobile #skeleton {
+                display: none;
+            }
+            #skeleton-sidebar {
+                background-color: #fbfbfa;
+                box-shadow: inset -1px 0 0 0 rgba(0, 0, 0, 0.025);
+                display: flex;
+                width: 240px;
+                flex-direction: column;
+                padding: 12px 14px;
+                overflow: hidden;
+            }
+            body.dark #skeleton-sidebar {
+                background-color: #202020;
+                box-shadow: inset -1px 0 0 0 rgba(255, 255, 255, 0.05);
+            }
+            #skeleton.isElectron #skeleton-sidebar {
+                padding-top: 46px;
+            }
+            #skeleton .row {
+                display: flex;
+                margin-bottom: 8px;
+                align-items: center;
+            }
+            #skeleton .row.fadein {
+                animation: 1s ease-in 0s 1 normal both running startup-shimmer-fade-in;
+            }
+            #skeleton .chevron {
+                width: 12px;
+                height: 12px;
+                display: block;
+                margin-right: 4px;
+                fill: rgba(227, 226, 224, 0.5);
+            }
+            body.dark #skeleton .chevron {
+                fill: #2f2f2f;
+            }
+            .startup-shimmer {
+                background: rgba(227, 226, 224, 0.5);
+                overflow: hidden;
+                position: relative;
+            }
+            body.dark .startup-shimmer {
+                background: #2f2f2f;
+            }
+            .startup-shimmer::before {
+                content: '';
+                position: absolute;
+                height: 100%;
+                width: 100%;
+                z-index: 1;
+                animation: 1s linear infinite startup-shimmer-animation;
+                background: linear-gradient(90deg, transparent 0, rgba(255, 255, 255, 0.4) 50%, transparent 100%);
+            }
+            body.dark .startup-shimmer::before {
+                background: linear-gradient(90deg, transparent 0, rgba(86, 86, 86, 0.4) 50%, transparent 100%);
+            }
+            #skeleton .icon {
+                width: 20px;
+                height: 20px;
+                border-radius: 4px;
+            }
+            #skeleton .text {
+                height: 10px;
+                border-radius: 10px;
+            }
+            #skeleton .draggable {
+                -webkit-app-region: drag;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 36px;
+                display: none;
+            }
+            #skeleton.isElectron .draggable {
+                display: block;
+            }</style
+        ><style id="scroll-properties"></style>
+        <div id="notion-app">
+            <div
+                class="notion-app-inner notion-dark-theme"
+                style="
+                    color: rgba(255, 255, 255, 0.81);
+                    fill: currentcolor;
+                    line-height: 1.5;
+                    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, 'Apple Color Emoji', Arial, sans-serif,
+                        'Segoe UI Emoji', 'Segoe UI Symbol';
+                    -webkit-font-smoothing: auto;
+                    background-color: rgb(25, 25, 25);
+                "
+            >
+                <div style="height: 100%">
+                    <div
+                        class="notion-cursor-listener"
+                        style="width: 100vw; height: 100%; position: relative; display: flex; flex: 1 1 0%; background: rgb(25, 25, 25); cursor: text"
+                    >
+                        <div class="" style="display: flex; flex-direction: column; width: 100%; overflow: hidden">
+                            <div style="max-width: 100vw; z-index: 100; background: rgb(25, 25, 25); user-select: none">
+                                <div
+                                    class="notion-topbar"
+                                    style="
+                                        width: 100%;
+                                        max-width: 100vw;
+                                        height: 45px;
+                                        opacity: 1;
+                                        transition: opacity 700ms ease 0s, color 700ms ease 0s;
+                                        position: relative;
+                                    "
+                                >
+                                    <div
+                                        style="
+                                            display: flex;
+                                            justify-content: space-between;
+                                            align-items: center;
+                                            overflow: hidden;
+                                            height: 45px;
+                                            padding-left: 12px;
+                                            padding-right: 10px;
+                                        "
+                                    >
+                                        <div
+                                            class="notranslate shadow-cursor-breadcrumb"
+                                            style="
+                                                display: flex;
+                                                align-items: center;
+                                                line-height: 1.2;
+                                                font-size: 14px;
+                                                height: 100%;
+                                                flex-grow: 0;
+                                                margin-right: 8px;
+                                                min-width: 0px;
+                                            "
+                                        >
+                                            <div
+                                                role="button"
+                                                style="
+                                                    user-select: none;
+                                                    transition: background 20ms ease-in 0s;
+                                                    cursor: pointer;
+                                                    display: inline-flex;
+                                                    align-items: center;
+                                                    flex-shrink: 1;
+                                                    white-space: nowrap;
+                                                    height: 24px;
+                                                    border-radius: 4px;
+                                                    font-size: 14px;
+                                                    line-height: 1.2;
+                                                    min-width: 0px;
+                                                    padding-left: 6px;
+                                                    padding-right: 6px;
+                                                    color: rgba(255, 255, 255, 0.81);
+                                                "
+                                                tabindex="0"
+                                            >
+                                                <div
+                                                    class="notranslate"
+                                                    style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px"
+                                                >
+                                                    empty page
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="flex-grow: 1; flex-shrink: 1"></div>
+                                        <div
+                                            role="button"
+                                            style="
+                                                user-select: none;
+                                                transition: background 20ms ease-in 0s;
+                                                cursor: pointer;
+                                                display: inline-flex;
+                                                align-items: center;
+                                                flex-shrink: 0;
+                                                white-space: nowrap;
+                                                height: 28px;
+                                                border-radius: 4px;
+                                                font-size: 14px;
+                                                line-height: 1.2;
+                                                min-width: 0px;
+                                                padding-left: 8px;
+                                                padding-right: 8px;
+                                                color: rgba(255, 255, 255, 0.81);
+                                            "
+                                            tabindex="0"
+                                        >
+                                            <svg
+                                                class="searchNew"
+                                                style="
+                                                    width: 14px;
+                                                    height: 14px;
+                                                    display: block;
+                                                    fill: inherit;
+                                                    flex-shrink: 0;
+                                                    backface-visibility: hidden;
+                                                    margin-right: 6px;
+                                                "
+                                                viewBox="0 0 17 17"
+                                            >
+                                                <path
+                                                    d="M6.78027 13.6729C8.24805 13.6729 9.60156 13.1982 10.709 12.4072L14.875 16.5732C15.0684 16.7666 15.3232 16.8633 15.5957 16.8633C16.167 16.8633 16.5713 16.4238 16.5713 15.8613C16.5713 15.5977 16.4834 15.3516 16.29 15.1582L12.1504 11.0098C13.0205 9.86719 13.5391 8.45215 13.5391 6.91406C13.5391 3.19629 10.498 0.155273 6.78027 0.155273C3.0625 0.155273 0.0214844 3.19629 0.0214844 6.91406C0.0214844 10.6318 3.0625 13.6729 6.78027 13.6729ZM6.78027 12.2139C3.87988 12.2139 1.48047 9.81445 1.48047 6.91406C1.48047 4.01367 3.87988 1.61426 6.78027 1.61426C9.68066 1.61426 12.0801 4.01367 12.0801 6.91406C12.0801 9.81445 9.68066 12.2139 6.78027 12.2139Z"
+                                                ></path></svg
+                                            >Search
+                                        </div>
+                                        <div
+                                            role="button"
+                                            style="
+                                                user-select: none;
+                                                transition: background 20ms ease-in 0s;
+                                                cursor: pointer;
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;
+                                                width: 32px;
+                                                height: 28px;
+                                                border-radius: 3px;
+                                            "
+                                            tabindex="0"
+                                        >
+                                            <svg
+                                                class="dots"
+                                                style="width: 18px; height: 18px; display: block; fill: inherit; flex-shrink: 0; backface-visibility: hidden"
+                                                viewBox="0 0 13 3"
+                                            >
+                                                <g>
+                                                    <path d="M3,1.5A1.5,1.5,0,1,1,1.5,0,1.5,1.5,0,0,1,3,1.5Z"></path>
+                                                    <path d="M8,1.5A1.5,1.5,0,1,1,6.5,0,1.5,1.5,0,0,1,8,1.5Z"></path>
+                                                    <path d="M13,1.5A1.5,1.5,0,1,1,11.5,0,1.5,1.5,0,0,1,13,1.5Z"></path>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                        <div
+                                            style="
+                                                flex: 0 0 auto;
+                                                width: 1px;
+                                                height: 16px;
+                                                margin-left: 8px;
+                                                margin-right: 8px;
+                                                background: rgba(255, 255, 255, 0.13);
+                                            "
+                                        ></div>
+                                        <div
+                                            role="button"
+                                            style="
+                                                user-select: none;
+                                                transition: background 20ms ease-in 0s;
+                                                cursor: pointer;
+                                                display: inline-flex;
+                                                align-items: center;
+                                                flex-shrink: 0;
+                                                white-space: nowrap;
+                                                height: 28px;
+                                                border-radius: 4px;
+                                                font-size: 14px;
+                                                line-height: 1.2;
+                                                min-width: 0px;
+                                                padding-left: 8px;
+                                                padding-right: 8px;
+                                                color: rgba(255, 255, 255, 0.81);
+                                            "
+                                            tabindex="0"
+                                        >
+                                            <svg
+                                                class="notionLogo"
+                                                style="
+                                                    width: 18px;
+                                                    height: 18px;
+                                                    display: block;
+                                                    fill: inherit;
+                                                    flex-shrink: 0;
+                                                    backface-visibility: hidden;
+                                                    margin-right: 6px;
+                                                "
+                                                viewBox="0 0 120 126"
+                                            >
+                                                <path
+                                                    d="M 20.6927 21.9315C 24.5836 25.0924 26.0432 24.8512 33.3492 24.3638L 102.228 20.2279C 103.689 20.2279 102.474 18.7705 101.987 18.5283L 90.5477 10.2586C 88.3558 8.55699 85.4356 6.60818 79.8387 7.09563L 13.1433 11.9602C 10.711 12.2014 10.2251 13.4175 11.1939 14.3924L 20.6927 21.9315ZM 24.8281 37.9835L 24.8281 110.456C 24.8281 114.351 26.7745 115.808 31.1553 115.567L 106.853 111.187C 111.236 110.946 111.724 108.267 111.724 105.103L 111.724 33.1169C 111.724 29.958 110.509 28.2544 107.826 28.4976L 28.721 33.1169C 25.8018 33.3622 24.8281 34.8225 24.8281 37.9835ZM 99.5567 41.8711C 100.042 44.0622 99.5567 46.2512 97.3618 46.4974L 93.7143 47.2241L 93.7143 100.728C 90.5477 102.43 87.6275 103.403 85.1942 103.403C 81.2983 103.403 80.3226 102.186 77.4044 98.54L 53.5471 61.087L 53.5471 97.3239L 61.0964 99.0275C 61.0964 99.0275 61.0964 103.403 55.0057 103.403L 38.2148 104.377C 37.727 103.403 38.2148 100.973 39.9179 100.486L 44.2996 99.2717L 44.2996 51.36L 38.2158 50.8725C 37.728 48.6815 38.9431 45.5225 42.3532 45.2773L 60.3661 44.0631L 85.1942 82.0036L 85.1942 48.4402L 78.864 47.7136C 78.3781 45.0351 80.3226 43.0902 82.7569 42.849L 99.5567 41.8711ZM 7.5434 5.39404L 76.9175 0.285276C 85.4366 -0.445402 87.6285 0.0440428 92.983 3.93368L 115.128 19.4982C 118.782 22.1747 120 22.9034 120 25.8211L 120 111.187C 120 116.537 118.051 119.701 111.237 120.185L 30.6734 125.05C 25.5584 125.294 23.124 124.565 20.4453 121.158L 4.13735 99.9994C 1.21516 96.1048 0 93.191 0 89.7819L 0 13.903C 0 9.5279 1.94945 5.8785 7.5434 5.39404Z"
+                                                ></path></svg
+                                            >Try Notion
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="width: calc(100% - 0px); user-select: none"></div>
+                            </div>
+                            <div
+                                class="notion-frame"
+                                style="
+                                    flex-grow: 0;
+                                    flex-shrink: 1;
+                                    display: flex;
+                                    flex-direction: column;
+                                    background: rgb(25, 25, 25);
+                                    z-index: 1;
+                                    height: calc(100vh - 45px);
+                                    max-height: 100%;
+                                    position: relative;
+                                    width: 1200px;
+                                "
+                            >
+                                <div
+                                    class="notion-scroller vertical"
+                                    style="
+                                        display: flex;
+                                        flex-direction: column;
+                                        z-index: 1;
+                                        flex-grow: 1;
+                                        position: relative;
+                                        align-items: center;
+                                        margin-right: 0px;
+                                        margin-bottom: 0px;
+                                        overflow: hidden auto;
+                                    "
+                                >
+                                    <div style="position: absolute; top: 0px; left: 0px"><div></div></div>
+                                    <div
+                                        class="whenContentEditable"
+                                        data-content-editable-root="true"
+                                        style="
+                                            caret-color: rgba(255, 255, 255, 0.81);
+                                            width: 100%;
+                                            display: flex;
+                                            flex-direction: column;
+                                            position: relative;
+                                            align-items: center;
+                                            flex-grow: 1;
+                                            --whenContentEditable--WebkitUserModify: read-write-plaintext-only;
+                                        "
+                                    >
+                                        <span style="height: 1px; width: 1px"></span>
+                                        <div
+                                            class="pseudoSelection"
+                                            contenteditable="false"
+                                            data-content-editable-void="true"
+                                            style="
+                                                user-select: none;
+                                                --pseudoSelection--background: transparent;
+                                                width: 100%;
+                                                display: flex;
+                                                flex-direction: column;
+                                                align-items: center;
+                                                flex-shrink: 0;
+                                                flex-grow: 0;
+                                                z-index: 2;
+                                            "
+                                        ></div>
+                                        <div style="width: 100%; display: flex; justify-content: center; z-index: 3; flex-shrink: 0">
+                                            <div style="max-width: 100%; min-width: 0px; width: 900px">
+                                                <div
+                                                    style="
+                                                        width: 100%;
+                                                        display: flex;
+                                                        flex-direction: column;
+                                                        align-items: center;
+                                                        flex-shrink: 0;
+                                                        flex-grow: 0;
+                                                    "
+                                                >
+                                                    <div style="max-width: 100%; padding-left: calc(96px + env(safe-area-inset-left)); width: 100%">
+                                                        <div
+                                                            class="pseudoSelection"
+                                                            contenteditable="false"
+                                                            data-content-editable-void="true"
+                                                            style="user-select: none; --pseudoSelection--background: transparent; pointer-events: none"
+                                                        >
+                                                            <div
+                                                                class="notion-page-controls"
+                                                                style="
+                                                                    display: flex;
+                                                                    justify-content: flex-start;
+                                                                    flex-wrap: wrap;
+                                                                    margin-top: 80px;
+                                                                    margin-bottom: 4px;
+                                                                    margin-left: -1px;
+                                                                    color: rgba(255, 255, 255, 0.282);
+                                                                    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica,
+                                                                        'Apple Color Emoji', Arial, sans-serif, 'Segoe UI Emoji', 'Segoe UI Symbol';
+                                                                    height: 24px;
+                                                                    pointer-events: auto;
+                                                                "
+                                                            ></div>
+                                                        </div>
+                                                        <div style="padding-right: calc(96px + env(safe-area-inset-right))">
+                                                            <div>
+                                                                <div
+                                                                    class="notion-selectable notion-page-block"
+                                                                    data-block-id="6106eb31-cefc-4356-9c33-2ec6decb4d50"
+                                                                    style="
+                                                                        color: rgba(255, 255, 255, 0.81);
+                                                                        font-weight: 700;
+                                                                        line-height: 1.2;
+                                                                        font-size: 40px;
+                                                                        font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica,
+                                                                            'Apple Color Emoji', Arial, sans-serif, 'Segoe UI Emoji', 'Segoe UI Symbol';
+                                                                        cursor: text;
+                                                                        display: flex;
+                                                                        align-items: center;
+                                                                    "
+                                                                >
+                                                                    <div
+                                                                        contenteditable="false"
+                                                                        data-content-editable-leaf="true"
+                                                                        placeholder="Untitled"
+                                                                        spellcheck="true"
+                                                                        style="
+                                                                            max-width: 100%;
+                                                                            width: 100%;
+                                                                            white-space: normal;
+                                                                            word-break: break-word;
+                                                                            caret-color: rgba(255, 255, 255, 0.81);
+                                                                            padding: 3px 2px;
+                                                                        "
+                                                                    >
+                                                                        empty page
+                                                                    </div>
+                                                                </div>
+                                                                <div style="margin-left: 4px"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    style="
+                                                        width: 100%;
+                                                        display: flex;
+                                                        flex-direction: column;
+                                                        align-items: center;
+                                                        flex-shrink: 0;
+                                                        flex-grow: 0;
+                                                    "
+                                                >
+                                                    <div
+                                                        contenteditable="false"
+                                                        data-content-editable-void="true"
+                                                        style="
+                                                            padding-left: calc(96px + env(safe-area-inset-left));
+                                                            padding-right: calc(96px + env(safe-area-inset-right));
+                                                            max-width: 100%;
+                                                            width: 100%;
+                                                        "
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <main style="display: flex; width: 100%; justify-content: center; padding-top: 5px">
+                                            <div style="max-width: 100%; min-width: 0px; width: 900px">
+                                                <div
+                                                    class="notion-page-content"
+                                                    style="
+                                                        flex-shrink: 0;
+                                                        flex-grow: 1;
+                                                        max-width: 100%;
+                                                        display: flex;
+                                                        align-items: flex-start;
+                                                        flex-direction: column;
+                                                        font-size: 16px;
+                                                        line-height: 1.5;
+                                                        width: 100%;
+                                                        z-index: 4;
+                                                        padding-bottom: 30vh;
+                                                        padding-left: calc(96px + env(safe-area-inset-left));
+                                                        padding-right: calc(96px + env(safe-area-inset-right));
+                                                    "
+                                                >
+                                                    <div
+                                                        class="notion-selectable notion-text-block"
+                                                        data-block-id="52a98784-02d2-4c1a-a325-81ec12dd457a"
+                                                        style="width: 100%; max-width: 1008px; margin-top: 2px; margin-bottom: 0px"
+                                                    >
+                                                        <div style="color: inherit; fill: inherit">
+                                                            <div style="display: flex">
+                                                                <div
+                                                                    contenteditable="false"
+                                                                    data-content-editable-leaf="true"
+                                                                    placeholder=" "
+                                                                    spellcheck="true"
+                                                                    style="
+                                                                        max-width: 100%;
+                                                                        width: 100%;
+                                                                        white-space: normal;
+                                                                        word-break: break-word;
+                                                                        caret-color: rgba(255, 255, 255, 0.81);
+                                                                        padding: 3px 2px;
+                                                                    "
+                                                                >
+                                                                    vast nothingness :)
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div contenteditable="false" data-content-editable-void="true" style="width: 0px">
+                                                <div
+                                                    style="
+                                                        display: none;
+                                                        flex-shrink: 0;
+                                                        pointer-events: none;
+                                                        width: 0px;
+                                                        position: absolute;
+                                                        right: -18px;
+                                                        opacity: 0;
+                                                    "
+                                                >
+                                                    <div
+                                                        style="
+                                                            display: flex;
+                                                            flex-direction: column;
+                                                            padding: 5px 16px;
+                                                            width: 340px;
+                                                            flex-shrink: 0;
+                                                            height: 100%;
+                                                            position: relative;
+                                                            pointer-events: none;
+                                                            z-index: 1;
+                                                        "
+                                                    >
+                                                        <div
+                                                            style="
+                                                                position: absolute;
+                                                                pointer-events: none;
+                                                                width: 100%;
+                                                                height: 100%;
+                                                                top: -5px;
+                                                                background: linear-gradient(rgb(25, 25, 25) 0px, rgba(25, 25, 25, 0) 15px);
+                                                            "
+                                                        ></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </main>
+                                        <span style="height: 1px; width: 1px"></span>
+                                    </div>
+                                    <div class="notion-presence-container" style="position: absolute; top: 0px; left: 0px; z-index: 89"><div></div></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="notion-peek-renderer"
+                            style="position: fixed; top: 0px; right: 0px; bottom: 0px; width: 600px; z-index: 109; transform: translateX(600px) translateZ(0px)"
+                        ></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="assets/notionsnapshot injection.js" type="text/javascript"></script>
+        <div style="width: env(safe-area-inset-bottom)"></div>
+    </body>
+</html>
