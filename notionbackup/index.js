@@ -1,3 +1,4 @@
+import { strict as assert } from 'node:assert'
 import { log } from 'console'
 import { ArgumentParser } from 'argparse'
 import * as fs from 'fs'
@@ -6,26 +7,16 @@ import AdmZip from 'adm-zip'
 import jsdom from 'jsdom'
 import prettier from 'prettier'
 
-const perror = (message) => {
-    assert(message && typeof message === 'string')
-    const stackTrace = new Error().stack
-    console.error(`error: ${message}\n`, stackTrace)
-    process.exit(1)
-}
-
-const assert = (assertion) => {
-    if (!assertion) {
-        perror('assertion failed')
-    }
-}
-
-const osWalk = (dirPath) => {
+const osWalkHtml = (dirPath) => {
     assert(dirPath && typeof dirPath === 'string')
     assert(fs.statSync(dirPath).isDirectory())
     const children = fs.readdirSync(dirPath).map((child) => path.join(dirPath, child))
     const subDirs = children.filter((child) => fs.statSync(child).isDirectory())
     const subFiles = children.filter((child) => fs.statSync(child).isFile())
-    return [...subFiles, ...subDirs.map((s) => osWalk(s)).flat()]
+
+    const recursiveSubFiles = subDirs.map((s) => osWalkHtml(s)).flat()
+    const files = [...subFiles, ...recursiveSubFiles]
+    return files.filter((filePath) => filePath.endsWith('.html'))
 }
 
 class ArgParser {
@@ -39,10 +30,10 @@ class ArgParser {
     static #validateInputPath = (inputPath) => {
         assert(inputPath && typeof inputPath === 'string')
         if (!fs.existsSync(inputPath)) {
-            perror('input file does not exist')
+            throw new Error('input file does not exist')
         }
         if (!inputPath.endsWith('.zip')) {
-            perror('input file is not a zip file')
+            throw new Error('input file is not a zip file')
         }
     }
 
@@ -100,9 +91,9 @@ class NotionBackup {
 
     static #fix() {
         assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
-        const htmlPaths = osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
+        const htmlPaths = osWalkHtml(NotionBackup.#outputDirPath)
 
-        const injectCssPath = path.join(process.cwd(), 'notionBackup', 'inject.css')
+        const injectCssPath = path.join(process.cwd(), 'notionbackup', 'injection', 'inject.css')
         const injectCssStr = fs.readFileSync(injectCssPath, 'utf8')
 
         const getHtmlElementClassList = (elem) => {
@@ -161,7 +152,7 @@ class NotionBackup {
 
     static #format() {
         assert(NotionBackup.#outputDirPath && typeof NotionBackup.#outputDirPath === 'string')
-        const htmlPaths = osWalk(NotionBackup.#outputDirPath).filter((filePath) => filePath.endsWith('.html'))
+        const htmlPaths = osWalkHtml(NotionBackup.#outputDirPath)
 
         const promises = htmlPaths.map((htmlPath) => {
             const uglyHtmlStr = fs.readFileSync(htmlPath, 'utf8')
