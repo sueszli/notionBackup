@@ -95,10 +95,10 @@ class NotionBackup {
     }
 
     static async run() {
+        const htmlPaths = NotionBackup.#getHtmlFiles(FileManager.getOutputDirPath())
+
         const workerPath = path.join(process.cwd(), 'notionbackup', 'worker.js')
         const workerPool = new Piscina({ filename: workerPath })
-
-        const htmlPaths = NotionBackup.#getHtmlFiles(FileManager.getOutputDirPath())
         const promises = htmlPaths.map((htmlPath) => {
             return workerPool.run({ htmlPath })
         })

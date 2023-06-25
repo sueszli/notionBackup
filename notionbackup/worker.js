@@ -19,7 +19,6 @@ const getClassArray = (elem) => {
 
 export default ({ htmlPath }) => {
     assert(htmlPath && typeof htmlPath === 'string')
-
     const htmlStr = fs.readFileSync(htmlPath, 'utf8')
     const dom = new jsdom.JSDOM(htmlStr)
     const elems = dom.window.document.querySelectorAll('*')
@@ -32,21 +31,13 @@ export default ({ htmlPath }) => {
         .filter((elem) => getClassArray(elem).length === 0)
         .forEach((elem) => elem.removeAttribute('class'))
 
-    // fix attachment links
+    // remove AWS name from asset links
     const anchorWrappers = Array.from(elems).filter((elem) => getClassArray(elem).includes('source'))
     const anchors = anchorWrappers.map((wrapper) => wrapper.querySelector('a')).filter((anchor) => anchor)
-    anchors.forEach((anchor) => {
-        const hasHref = anchor.hasAttribute('href')
-        if (!hasHref || !anchor.getAttribute('href')) {
-            log('found anchor block without href / with external href in :', htmlPath)
-            return
-        }
-        const link = anchor.getAttribute('href')
-        if (link.startsWith('http')) {
-            log('found external link in :', htmlPath)
-            return
-        }
-        const filename = path.basename(link)
+    const isAsset = (anchor) => anchor.hasAttribute('href') && anchor.getAttribute('href') && !anchor.getAttribute('href').startsWith('http')
+    anchors.filter(isAsset).forEach((anchor) => {
+        const href = anchor.getAttribute('href')
+        const filename = path.basename(href)
         anchor.textContent = filename
     })
 
