@@ -5,8 +5,6 @@
  / /|  / /_/ / /_/ / /_/ / / / /  / /_/ / /_/ / /__/ ,< / /_/ / /_/ /
 /_/ |_/\____/\__/_/\____/_/ /_/  /_____/\__,_/\___/_/|_|\__,_/ .___/
                                                             /_/
-
-A deobfuscator for Notion HTML exports.
 Turn your exported files into editable and visually appealing pages – keep them forever.
 ```
 
