@@ -12,11 +12,7 @@ Make your html exports readable, editable and fully offline – keep them foreve
 
 ## What is this good for?
 
-_notion: great writing experience, bad backup experience_
-
-with notion you don't have to think about anything other than writing. it's a great writing experience.
-
-but there is one issue: you don't own your data and they could pull the plug on you at any time or change their pricing model.
+notion is a cloud service. you don't own your data and they could pull the plug on you at any time or change their pricing model.
 
 and when you want to export your content, you have to think about a lot of things:
 
