@@ -5,12 +5,10 @@
  / /|  / /_/ / /_/ / /_/ / / / /  / /_/ / /_/ / /__/ ,< / /_/ / /_/ /
 /_/ |_/\____/\__/_/\____/_/ /_/  /_____/\__,_/\___/_/|_|\__,_/ .___/
                                                             /_/
-Turn your exported files into editable and visually appealing pages – keep them forever.
+Make your html exports readable, editable and fully offline – keep them forever.
 ```
 
 <img alt="obfuscated" src="https://github.com/sueszli/notionBackup/assets/61852663/7cb89455-db54-446f-a557-651470c9d629">
-
-With this project you'll never have to deal with obfuscated Notion exports again!
 
 <br><br>
 
