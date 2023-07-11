@@ -34,45 +34,6 @@ And you will get a zip file with your pages that are:
 - offline ready (katex is cached locally) → _work in progress!_
 
 But remember that **exports can't go back in:** once you leave notion, you can't return. You can't import your html exports to notion or any other note taking app or html editor that is as good as notion either. So exports are a final decision.
-```
-
-
-
-
-
-
-
-
-
-but when you want to export your content, you have to think about a lot of things:
-
-- **markdown exports:** unreliable because they omit data
-
-  - data gets omitted because markdown is less expressive than the html used to store the data. it doesn't support toggle-able elements, nested paragraphs and other blocks. markdown therefore generally shouldn't be used for exporting.
-
-- **html exports:** break latex equations
-
-  - html can't natively render latex equations. notion uses the katex library for this. this means that you have to cache the katex javascript library that is downloaded via a CDN locally if you want to make truly offline backups of your files.
- 
-  - you have to also format the minified html code and remove css like `white-space: pre-wrap;`
-
-this tool is here to help you with all of that.
-
-you just have to:
-
-- export your notion pages as html
-- run the script
-
-and you will get zip file with all of your pages that are:
-
-- formatted (which makes it editable again)
-- styled (slight improvements over notion's default export styling)
-- offline ready (katex is cached locally) → _work in progress!_
-
-but keep in mind that **exports can't be imported back in:** once you're out, you're out
-
-you can't import your html exports back into notion and there are no other note taking apps / html editors that are as nice as notion either that you could import them to. therefore exports are kind of a one-way street.
-
 
 <br><br>
 
