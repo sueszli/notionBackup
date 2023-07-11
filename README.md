@@ -14,7 +14,7 @@ Make your html exports readable, editable and fully offline – keep them foreve
 
 notion is a cloud service. you don't own your data and they could pull the plug on you at any time or change their pricing model.
 
-and when you want to export your content, you have to think about a lot of things:
+but when you want to export your content, you have to think about a lot of things:
 
 - **markdown exports:** unreliable because they omit data
 
