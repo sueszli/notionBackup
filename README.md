@@ -43,7 +43,7 @@ and you will get zip file with all of your pages that are:
 
 - formatted (which makes it editable again)
 - styled (slight improvements over notion's default export styling)
-- offline ready (katex is cached locally)
+- offline ready (katex is cached locally) → _work in progress!_
 
 <br><br>
 
