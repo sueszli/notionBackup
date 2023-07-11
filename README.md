@@ -20,8 +20,6 @@ but when you want to export your content, you have to think about a lot of thing
 
   - data gets omitted because markdown is less expressive than the html used to store the data. it doesn't support toggle-able elements, nested paragraphs and other blocks. markdown therefore generally shouldn't be used for exporting.
 
-  - if you still decide to use the markdown export feature, you also have to manually remove the redundant `*` characters around bold and italic text and fix.
-
 - **html exports:** break latex equations
 
   - html can't natively render latex equations. notion uses the katex library for this. this means that you have to cache the katex javascript library that is downloaded via a CDN locally if you want to make truly offline backups of your files.
