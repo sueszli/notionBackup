@@ -25,7 +25,7 @@ class ArgParser {
     }
 
     static parseArgs() {
-        const parser = new ArgumentParser({ description: 'notion html export enhancer' })
+        const parser = new ArgumentParser({ description: 'notion html export fixer' })
         parser.add_argument('input', { help: 'path to zip file containing the html export' })
         const args = parser.parse_args()
 
