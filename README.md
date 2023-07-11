@@ -10,7 +10,7 @@ Make your html exports readable, editable and fully offline – keep them foreve
 
 <br><br>
 
-_notion: great writing experience, bad backup experience_
+## Notion: great writing experience, bad backup experience
 
 with notion you don't have to think about anything other than writing. it's a great writing experience.
 
