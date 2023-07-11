@@ -16,7 +16,9 @@ _notion: great writing experience, bad backup experience_
 
 with notion you don't have to think about anything other than writing. it's a great writing experience.
 
-but when you want to export your content, you have to think about a lot of things:
+but there is one issue: you don't own your data and they could pull the plug on you at any time or change their pricing model.
+
+and when you want to export your content, you have to think about a lot of things:
 
 - **markdown exports:** unreliable because they omit data
 
@@ -33,8 +35,6 @@ but when you want to export your content, you have to think about a lot of thing
 - **exports can't be imported back in:** once you're out, you're out
 
   - you can't import your markdown or html exports back into notion and there are no other note taking apps / html editors that are as nice as notion either. once you export the pages it's a lot harder to edit them again. therefore exports are kind of a one-way street.
-
-additionally you have to worry about the fact that notion is a cloud service. you don't own your data and they could pull the plug on you at any time or change their pricing model.
 
 this tool is here to help you with all of that.
 
