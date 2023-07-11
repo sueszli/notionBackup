@@ -41,7 +41,7 @@ and you will get zip file with all of your pages that are:
 
 but keep in mind that **exports can't be imported back in:** once you're out, you're out
 
-you can't import your html exports back into notion and there are no other note taking apps / html editors that are as nice as notion either. once you export the pages it's a lot harder to edit them again. therefore exports are kind of a one-way street.
+you can't import your html exports back into notion and there are no other note taking apps / html editors that are as nice as notion either that you could import them to. therefore exports are kind of a one-way street.
 
 
 <br><br>
