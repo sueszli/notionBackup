@@ -26,10 +26,6 @@ but when you want to export your content, you have to think about a lot of thing
  
   - you have to also format the minified html code and remove css like `white-space: pre-wrap;`
 
-- **exports can't be imported back in:** once you're out, you're out
-
-  - you can't import your markdown or html exports back into notion and there are no other note taking apps / html editors that are as nice as notion either. once you export the pages it's a lot harder to edit them again. therefore exports are kind of a one-way street.
-
 this tool is here to help you with all of that.
 
 you just have to:
@@ -42,6 +38,11 @@ and you will get zip file with all of your pages that are:
 - formatted (which makes it editable again)
 - styled (slight improvements over notion's default export styling)
 - offline ready (katex is cached locally) → _work in progress!_
+
+but keep in mind that **exports can't be imported back in:** once you're out, you're out
+
+you can't import your html exports back into notion and there are no other note taking apps / html editors that are as nice as notion either. once you export the pages it's a lot harder to edit them again. therefore exports are kind of a one-way street.
+
 
 <br><br>
 
