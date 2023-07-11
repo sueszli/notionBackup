@@ -8,8 +8,6 @@
 Make your html exports readable, editable and fully offline – keep them forever.
 ```
 
-<img alt="obfuscated" src="https://github.com/sueszli/notionBackup/assets/61852663/7cb89455-db54-446f-a557-651470c9d629">
-
 <br><br>
 
 _notion: great writing experience, bad backup experience_
