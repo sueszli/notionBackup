@@ -20,7 +20,7 @@ but when you want to export your content, you have to think about a lot of thing
 
   - data gets omitted because markdown is less expressive than the html used to store the data. it doesn't support toggle-able elements, nested paragraphs and other blocks. markdown therefore generally shouldn't be used for exporting.
 
-  - if you still decide to use the markdown export feature, you also have to format your content manually because of the redundant `*` characters around bold and italic text.
+  - if you still decide to use the markdown export feature, you also have to manually remove the redundant `*` characters around bold and italic text and fix.
 
 - **html exports:** break latex equations
 
