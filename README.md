@@ -27,7 +27,7 @@ You just need to:
 - export your notion pages as html
 - run the script
 
-And you will get a zip file with your pages that are:
+Then your backup will be:
 
 - formatted (easy to edit)
 - styled (better than notion's default)
