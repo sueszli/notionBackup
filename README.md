@@ -18,7 +18,7 @@ If you want to export your content, you face some challenges:
 
 - **markdown exports:** lose data because markdown can't express everything that html can, like toggles, nested blocks, etc. Markdown is not good for exporting.
 
-- **html exports:** mess up latex equations because html needs the katex library to render them. You also need to cache the katex library locally for offline backups, format the html code and remove some css.
+- **html exports:** are minified, contain weird css and mess up latex equations because html needs the katex library to render them. You also need to cache the katex library locally for offline backups, format the html code and remove some css.
 
 This tool helps you with these issues.
 
