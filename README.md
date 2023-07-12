@@ -12,7 +12,7 @@ Make your html exports readable, editable and fully offline – keep them foreve
 
 ## Why this tool?
 
-Notion is a cloud service. Uou don't own your data and they could pull the plug on you at any time or change their pricing model.
+Notion is a cloud service. You don't own your data and they could pull the plug on you at any time or change their pricing model.
 
 If you want to export your content, you face some challenges:
 
