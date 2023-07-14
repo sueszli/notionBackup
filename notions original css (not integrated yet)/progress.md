@@ -1,6 +1,6 @@
-# Reconstructing the original look
+# reconstructing the original look
 
-used fonts: https://twitter.com/notionhq/status/740615434307665921?lang=ar-x-fm
+used fonts: [https://twitter.com/notionhq/status/740615434307665921?lang=ar-x-fm](https://twitter.com/notionhq/status/740615434307665921)
 
 -   Mono: Nitti (iA Writer) – https://fonts.adobe.com/fonts/nitti
 -   Serif: Lyon – https://www.typewolf.com/lyon-text
