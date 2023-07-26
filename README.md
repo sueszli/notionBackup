@@ -25,7 +25,7 @@ This tool helps you do just that: Fix your html exports.
 You just need to:
 
 - export your notion pages as html
-- run the script
+- run the script on the export zip
 
 Then your backup will be:
 
