@@ -16,7 +16,7 @@ Notion is a cloud service. You don't own your data and they could pull the plug 
 
 If you want to export your content, you face some challenges:
 
-- **markdown exports:** lose data because markdown can't express everything that html can, like toggles, nested blocks, etc. Markdown is not good for exporting.
+- **markdown exports:** lose data because markdown can't express everything that html can, like toggles, nested blocks, etc. markdown is not good for exporting.
 
 - **html exports:** are minified, contain weird css and mess up latex equations because html needs the katex library to render them. This means that you need to format the html code, remove some css and cache the katex library locally for offline backups.
 
