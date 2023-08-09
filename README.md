@@ -27,11 +27,20 @@ node notionbackup ./demo/blog.zip
 
 <br><br>
 
-## Why this tool?
+| export type             | no data loss      | fully offline                  | editable      |
+| ----------------------- | ----------------- | ------------------------------ | ------------- |
+| notion API (json)       | ❌                | ✅                             | ✅            |
+| web scraping (html)     | ❌ (not reliable) | ❌ (depends on implementation) | ❌ (minified) |
+| pdf                     | ❌                | ✅                             | ❌            |
+| markdown                | ❌                | ✅                             | ✅            |
+| html                    | ✅                | ❌ (CDN dependency)            | ❌ (minified) |
+|                         |                   |                                |               |
+| **html + notionBackup** | ✅                | ✅                             | ✅            |
+
 
 Notion is a cloud service. You don't own your data and they could pull the plug on you at any time or change their pricing model.
 
-If you want to export your content, you face some challenges:
+If you want to export your content to back up, you face some challenges:
 
 - **Markdown exports:** lose data because markdown can't express everything that html can, like toggles, nested blocks, etc. Markdown is not good for exporting.
 
