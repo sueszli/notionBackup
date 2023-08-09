@@ -8,6 +8,23 @@
 Make your html exports readable, editable and fully offline – keep them forever.
 ```
 
+```bash
+# clone
+git clone https://github.com/sueszli/notionBackup
+cd notionBackup
+
+# install dependencies
+npm install npm@latest -g
+npm install
+clear
+
+# show how to use
+node notionbackup --help
+
+# test
+node notionbackup ./demo/blog.zip
+```
+
 <br><br>
 
 ## Why this tool?
@@ -34,27 +51,3 @@ Then your backup will be:
 - offline ready (katex is cached locally) → _work in progress!_
 
 But remember that **exports can't go back in:** once you leave notion, you can't return. You can't import your html exports to notion or any other note taking app or html editor that is as good as notion either. So exports are a final decision.
-
-<br><br>
-
-
-## Install
-
-Run the bash script below to get started:
-
-```bash
-# clone
-git clone https://github.com/sueszli/notionBackup
-cd notionBackup
-
-# install dependencies
-npm install npm@latest -g
-npm install
-clear
-
-# run
-node notionbackup --help
-
-# example usage
-node notionbackup ./demo/blog.zip
-```
