@@ -32,8 +32,7 @@ but keep in mind: once content leaves Notion, you can't bring it back. exported 
 
 <br><br><br>
 
-
-## why this exists
+here is why you need this tool to make your Notion exports future-proof.
 
 there are 5 ways to back up your notion content:
 
