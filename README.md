@@ -25,7 +25,7 @@ node notionbackup --help
 node notionbackup ./demo/blog.zip
 ```
 
-just run this script on your exported HTML zip files from Notion:
+just run this script on your exported HTML zip files from Notion.
 
 but keep in mind: once content leaves Notion, you can't bring it back. exported html can't be reimported into Notion or similar apps/editors that are as good as notion. exports are permanent choices.
 
