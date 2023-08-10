@@ -30,11 +30,17 @@ just run this script on your exported HTML zip files from Notion:
 but keep in mind: once content leaves Notion, you can't bring it back. exported html can't be reimported into Notion or similar apps/editors that are as good as notion. exports are permanent choices.
 
 
-<br><br><br>
+<br><br><br><br>
 
-here is why you need this tool to make your Notion exports future-proof.
+---
 
-there are 5 ways to back up your notion content:
+<br><br>
+
+still not convinced?
+
+here's why this tool makes your Notion backups future-proof.
+
+there are 5 ways to back up your Notion content:
 
 | export type           | no data loss      | fully offline                  | editable      |
 | --------------------- | ----------------- | ------------------------------ | ------------- |
