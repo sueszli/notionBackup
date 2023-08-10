@@ -5,8 +5,10 @@
  / /|  / /_/ / /_/ / /_/ / / / /  / /_/ / /_/ / /__/ ,< / /_/ / /_/ /
 /_/ |_/\____/\__/_/\____/_/ /_/  /_____/\__,_/\___/_/|_|\__,_/ .___/
                                                             /_/
-Make your html exports readable, editable and fully offline – keep them forever.
+make your html exports editable and fully offline – keep them forever.
 ```
+
+just run this script on your exported HTML zip files from Notion:
 
 ```bash
 # clone
@@ -18,45 +20,36 @@ npm install npm@latest -g
 npm install
 clear
 
-# show how to use
+# show usage
 node notionbackup --help
 
 # test
 node notionbackup ./demo/blog.zip
 ```
 
+> keep in mind: once content leaves Notion, you can't bring it back. exported html can't be reimported into Notion or similar apps/editors that are as good as notion. exports are permanent choices.
+
+
 <br><br>
 
-| export type             | no data loss      | fully offline                  | editable      |
-| ----------------------- | ----------------- | ------------------------------ | ------------- |
-| notion API (json)       | ❌                | ✅                             | ✅            |
-| web scraping (html)     | ❌ (not reliable) | ❌ (depends on implementation) | ❌ (minified) |
-| pdf                     | ❌                | ✅                             | ❌            |
-| markdown                | ❌                | ✅                             | ✅            |
-| html                    | ✅                | ❌ (CDN dependency)            | ❌ (minified) |
-|                         |                   |                                |               |
-| **html + notionBackup** | ✅                | ✅                             | ✅            |
+## why this exists
 
+there are 5 ways to back up your notion content:
 
-Notion is a cloud service. You don't own your data and they could pull the plug on you at any time or change their pricing model.
+| export type           | no data loss      | fully offline                  | editable      |
+| --------------------- | ----------------- | ------------------------------ | ------------- |
+| notion API (json)     | ❌                | ✅                             | ✅            |
+| web scraping (html)   | ❌ (not reliable) | ❌ (depends on implementation) | ❌ (minified) |
+| pdf                   | ❌                | ✅                             | ❌            |
+| markdown              | ❌                | ✅                             | ✅            |
+| html                  | ✅                | ❌ (CDN dependency)            | ❌ (minified) |
+| _html + notionBackup_ | ✅                | ✅                             | ✅            |
 
-If you want to export your content to back up, you face some challenges:
+_non-html exports:_ \
+everything that isn't html is inherently lossy. this is because json, markdown and pdf can't express everything that html can (like toggles, nested blocks, etc).
 
-- **Markdown exports:** lose data because markdown can't express everything that html can, like toggles, nested blocks, etc. Markdown is not good for exporting.
+_html exports:_ \
+html exports are lossless but not editable (minified), require an internet connection (javascript CDN dependency for KaTeX) and have awkward styling thay makes them hard to read.
 
-- **Html exports:** are minified, contain weird css and mess up latex equations because html needs the katex library to render them. This means that you need to format the html code, remove some css and cache the katex library locally for offline backups.
+but this script fixes just that! it makes html exports fully local, editable and pretty.
 
-This tool helps you do just that: Fix your html exports.
-
-You just need to:
-
-- export your notion pages as html
-- run the script on the export zip
-
-Then your backup will be:
-
-- formatted (easy to edit)
-- styled (better than notion's default)
-- offline ready (katex is cached locally) → _work in progress!_
-
-But remember that **exports can't go back in:** once you leave notion, you can't return. You can't import your html exports to notion or any other note taking app or html editor that is as good as notion either. So exports are a final decision.
