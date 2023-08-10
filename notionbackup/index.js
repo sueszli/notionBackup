@@ -6,6 +6,30 @@ import * as path from 'path'
 import AdmZip from 'adm-zip'
 import Piscina from 'piscina'
 
+/*
+
+TODO: 
+
+- refactor project to start fresh
+    - don't take any arguments (it always, prettifies, injects, caches js)
+    - try to put worker threads in the same file as the main thread so you reduce the number of files
+    - add typescript support and try ts-node (to reduce number of assert statements)
+
+- feature: download javascript dependencies in output directory
+
+- feature: upload to npm and turn into npx executable to call anywhere
+    - zip output
+    - put output in the same directory as input
+
+- bugfix: check why math formulas look stretched after prettifying
+
+- impovement: better multithreading - read into worker thread pools
+    - https://snyk.io/blog/node-js-multithreading-with-worker-threads/
+    - https://nodejs.org/api/worker_threads.html
+    - https://nodejs.org/api/async_context.html#using-asyncresource-for-a-worker-thread-pool → use instead of a library
+
+*/
+
 class ArgParser {
     static #args = null
 

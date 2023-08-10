@@ -42,7 +42,7 @@ export default ({ htmlPath }) => {
     })
 
     // add css injection
-    const cssInjection = fs.readFileSync(path.join(process.cwd(), 'notionbackup', 'injection', 'inject.css'), 'utf8')
+    const cssInjection = fs.readFileSync(path.join(process.cwd(), 'notionbackup', 'injection.css'), 'utf8')
     assert(cssInjection && typeof cssInjection === 'string')
     const styleElem = dom.window.document.querySelector('style')
     styleElem.innerHTML = styleElem.innerHTML + '\n\n' + cssInjection

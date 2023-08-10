@@ -18,17 +18,15 @@ npm install npm@latest -g
 npm install
 clear
 
-# show usage
-node notionbackup --help
-
 # test
 node notionbackup ./demo/blog.zip
+node notionbackup ./demo/all\ blocks.zip
+node notionbackup ./demo/full\ templates.zip
 ```
 
 just run this script on your exported HTML zip files from Notion.
 
 but keep in mind: once content leaves notion, you can't bring it back. exported html can't be reimported into notion or similar apps/editors that are as good as notion. exports are permanent choices.
-
 
 <br><br><br><br>
 
@@ -58,4 +56,3 @@ _html exports:_ \
 html exports are lossless but not editable (minified), require an internet connection (javascript CDN dependency for KaTeX) and have awkward styling thay makes them hard to read.
 
 but this script fixes just that! it makes html exports fully local, editable and pretty.
-
