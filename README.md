@@ -38,7 +38,7 @@ but keep in mind: once content leaves notion, you can't bring it back. exported 
 
 still not convinced?
 
-here's why this tool makes your Notion backups future-proof.
+here's why this tool makes your notion backups future-proof.
 
 there are 5 ways to back up your notion content:
 
