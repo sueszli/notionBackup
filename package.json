@@ -8,5 +8,27 @@
         "prettier": "^2.8.8",
         "ts-node": "^10.9.1",
         "typescript": "^5.1.6"
-    }
+    },
+    "name": "notionbackup",
+    "description": "make your html exports future proof",
+    "version": "1.0.0",
+    "main": "notionbackup/index.ts",
+    "devDependencies": {},
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sueszli/notionBackup.git"
+    },
+    "keywords": [
+        "notion",
+        "notion-backup"
+    ],
+    "author": "yahya jabary",
+    "license": "GNU Affero General Public License v3.0",
+    "bugs": {
+        "url": "https://github.com/sueszli/notionBackup/issues"
+    },
+    "homepage": "https://github.com/sueszli/notionBackup#readme"
 }
