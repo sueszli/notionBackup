@@ -139,7 +139,7 @@ async function processHtml(htmlPath: string) {
     const figures = Array.from(elems).filter((elem) => elem.tagName.toLowerCase() === 'figure')
     figures.forEach((figure) => {
         const comment = dom.window.document.createComment('prettier-ignore')
-        figure.parentNode.insertBefore(comment, figure)
+        // figure.parentNode.insertBefore(comment, figure)
     })
 
     // cache katex
