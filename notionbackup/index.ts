@@ -10,9 +10,7 @@ import Piscina from 'piscina'
 TODO: 
 
 - refactor project to start fresh
-    - don't take any arguments (it always prettifies, injects, caches js)
     - try to put worker threads in the same file as the main thread so you reduce the number of files
-    - add typescript support and try ts-node (to reduce number of assert statements)
 
 - feature: download javascript dependencies in output directory
 
