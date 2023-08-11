@@ -12,12 +12,6 @@ import axios from 'axios'
 
 TODO: 
 
-- feature: cache / download stuff
-    - img
-    - figure
-
-- bugfix: add <prettier-ignore> before all figure blocks
-
 - feature: upload to npm and turn into npx executable to call anywhere (process in the same directory as the input file)
 
 */
@@ -135,14 +129,41 @@ async function processHtml(htmlPath: string) {
     await Promise.all(tasks)
     log('\t cached', tasks.length, 'images')
 
-    // add prettier-ignore comment for katex equations
-    const figures = Array.from(elems).filter((elem) => elem.tagName.toLowerCase() === 'figure')
-    figures.forEach((figure) => {
-        const comment = dom.window.document.createComment('prettier-ignore')
-        // figure.parentNode.insertBefore(comment, figure)
-    })
+    // cache katex equations
+    const equations = Array.from(elems)
+        .filter((elem) => elem.tagName.toLowerCase() === 'figure')
+        .filter((elem) => getElemClassArray(elem).includes('equation'))
+    if (equations.length > 0) {
+        const eqn = equations[0]
+        const styleElem: Element = eqn.querySelector('style')
+        const styleStr = styleElem.innerHTML
+        const urlStr = styleStr.split('url(')[1].split(')')[0].replace(/'/g, '')
 
-    // cache katex
+        const url = new URL(urlStr)
+        const filename = path.basename(url.pathname)
+        assert(filename === 'katex.min.css')
+        const downloadPath = path.join(cachePath, filename)
+
+        const response = await axios({
+            method: 'get',
+            url: urlStr,
+            responseType: 'stream',
+        })
+        response.data.pipe(fs.createWriteStream(downloadPath))
+        styleElem.remove()
+
+        const head = dom.window.document.querySelector('head')
+        const linkElem = dom.window.document.createElement('link')
+        linkElem.setAttribute('rel', 'stylesheet')
+        linkElem.setAttribute('href', path.relative(path.dirname(htmlPath), downloadPath))
+        head.appendChild(linkElem)
+
+        log('\t cached katex.min.css')
+    }
+    equations.forEach((eqn) => {
+        const comment = dom.window.document.createComment('prettier-ignore')
+        eqn.parentNode.insertBefore(comment, eqn)
+    })
 
     // inject custom css
     const cssInjection: string = fs.readFileSync(path.join(process.cwd(), 'notionbackup', 'injection.css'), 'utf8')
