@@ -133,11 +133,16 @@ async function processHtml(htmlPath: string) {
             })
         })
     await Promise.all(tasks)
-    if (tasks.length > 0) log('cached:', tasks.length, 'images')
+    log('\t cached', tasks.length, 'images')
+
+    // add prettier-ignore comment for katex equations
+    const figures = Array.from(elems).filter((elem) => elem.tagName.toLowerCase() === 'figure')
+    figures.forEach((figure) => {
+        const comment = dom.window.document.createComment('prettier-ignore')
+        figure.parentNode.insertBefore(comment, figure)
+    })
 
     // cache katex
-
-    // add prettier-ignore for katex equations
 
     // inject custom css
     const cssInjection: string = fs.readFileSync(path.join(process.cwd(), 'notionbackup', 'injection.css'), 'utf8')
@@ -174,9 +179,12 @@ const main = async () => {
     const unzippedInputPath = getUnzippedInputPath(inputPath)
     const htmlPaths = getHtmlFiles(unzippedInputPath)
 
-    for (const htmlPath of htmlPaths) {
+    for (let i = 0; i < htmlPaths.length; i++) {
+        const htmlPath = htmlPaths[i]
+        const filename = path.basename(htmlPath)
+        const progress = ((i + 1) / htmlPaths.length) * 100
+        log('\x1b[32m%s\x1b[0m', `[${progress.toFixed(2)}%]`, filename)
         await processHtml(htmlPath)
-        // log('processed:', path.basename(htmlPath))
     }
     console.timeEnd('execution time')
 }
