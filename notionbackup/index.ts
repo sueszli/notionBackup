@@ -8,14 +8,6 @@ import prettier from 'prettier'
 import { randomUUID } from 'node:crypto'
 import axios from 'axios'
 
-/*
-
-TODO: 
-
-- feature: upload to npm and turn into npx executable to call anywhere (process in the same directory as the input file)
-
-*/
-
 function getInputPath(): string {
     const args: string[] = process.argv.slice(2)
     assert(args.length === 1)
