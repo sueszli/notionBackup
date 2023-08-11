@@ -5,16 +5,20 @@ import * as path from 'path'
 import AdmZip from 'adm-zip'
 import jsdom from 'jsdom'
 import prettier from 'prettier'
+import { randomUUID } from 'node:crypto'
+import axios from 'axios'
 
 /*
 
 TODO: 
 
-- feature: cache / download javascript dependencies in output directory
+- feature: cache / download stuff
+    - img
+    - figure
+
+- bugfix: add <prettier-ignore> before all figure blocks
 
 - feature: upload to npm and turn into npx executable to call anywhere (process in the same directory as the input file)
-
-- bugfix: check why math formulas look stretched after prettifying
 
 */
 
@@ -70,7 +74,7 @@ function getElemClassArray(elem: Element) {
         .filter((s) => s.trim())
 }
 
-function workerProcessHtmlFile(htmlPath: string) {
+async function processHtml(htmlPath: string) {
     const htmlStr: string = fs.readFileSync(htmlPath, 'utf8')
     const dom: jsdom.JSDOM = new jsdom.JSDOM(htmlStr)
     const elems: Element[] = dom.window.document.querySelectorAll('*')
@@ -92,6 +96,48 @@ function workerProcessHtmlFile(htmlPath: string) {
         const filename: string = path.basename(href)
         anchor.textContent = filename
     })
+
+    // create cache folder
+    const cachePath = path.join(path.dirname(htmlPath), '.cache')
+    if (!fs.existsSync(cachePath)) {
+        fs.mkdirSync(cachePath)
+    }
+
+    // cache images
+    const imgs = Array.from(elems).filter((elem) => elem.tagName.toLowerCase() === 'img')
+    const tasks = imgs
+        .filter((img) => img.hasAttribute('src'))
+        .filter((img) => img.getAttribute('src').startsWith('http'))
+        .map((img) => {
+            const urlStr: string = img.getAttribute('src')
+            const url = new URL(urlStr)
+
+            const getUniqueFileName = (url: URL) => {
+                let filename = path.basename(url.pathname)
+                const filenameEnding = path.extname(filename)
+                if (!filenameEnding) {
+                    filename = filename + '.png'
+                }
+                return filename.split('.').slice(0, -1).join('.') + randomUUID() + filenameEnding
+            }
+            const downloadPath = path.join(cachePath, getUniqueFileName(url))
+
+            return axios({
+                method: 'get',
+                url: urlStr,
+                responseType: 'stream',
+            }).then((response) => {
+                response.data.pipe(fs.createWriteStream(downloadPath))
+                const relativePath = path.relative(path.dirname(htmlPath), downloadPath)
+                img.setAttribute('src', relativePath)
+            })
+        })
+    await Promise.all(tasks)
+    if (tasks.length > 0) log('cached:', tasks.length, 'images')
+
+    // cache katex
+
+    // add prettier-ignore for katex equations
 
     // inject custom css
     const cssInjection: string = fs.readFileSync(path.join(process.cwd(), 'notionbackup', 'injection.css'), 'utf8')
@@ -118,7 +164,7 @@ const BANNER =
     ' / /|  / /_/ / /_/ / /_/ / / / /  / /_/ / /_/ / /__/ ,< / /_/ / /_/ /\n' +
     '/_/ |_/\\____/\\__/_/\\____/_/ /_/  /_____/\\__,_/\\___/_/|_|\\__,_/ .___/\n' +
     '                                                            /_/'
-const main = () => {
+const main = async () => {
     console.clear()
     log(BANNER)
 
@@ -127,13 +173,11 @@ const main = () => {
     const inputPath = getInputPath()
     const unzippedInputPath = getUnzippedInputPath(inputPath)
     const htmlPaths = getHtmlFiles(unzippedInputPath)
-    log(`found ${htmlPaths.length} html files`)
 
     for (const htmlPath of htmlPaths) {
-        workerProcessHtmlFile(htmlPath)
-        log('processed:', path.basename(htmlPath))
+        await processHtml(htmlPath)
+        // log('processed:', path.basename(htmlPath))
     }
-
     console.timeEnd('execution time')
 }
 main()
