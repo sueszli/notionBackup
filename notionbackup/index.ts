@@ -3,15 +3,12 @@ import { log } from 'console'
 import * as fs from 'fs'
 import * as path from 'path'
 import AdmZip from 'adm-zip'
-import workerpool from 'workerpool'
 import jsdom from 'jsdom'
 import prettier from 'prettier'
 
 /*
 
 TODO: 
-
-- try to put worker threads in the same file as the main thread so you reduce the number of files
 
 - feature: cache / download javascript dependencies in output directory
 
@@ -74,8 +71,6 @@ function getElemClassArray(elem: Element) {
 }
 
 function workerProcessHtmlFile(htmlPath: string) {
-    log('processing:', path.basename(htmlPath))
-
     const htmlStr: string = fs.readFileSync(htmlPath, 'utf8')
     const dom: jsdom.JSDOM = new jsdom.JSDOM(htmlStr)
     const elems: Element[] = dom.window.document.querySelectorAll('*')
@@ -114,7 +109,6 @@ function workerProcessHtmlFile(htmlPath: string) {
     })
 
     fs.writeFileSync(htmlPath, prettyHtmlStr)
-    log('processed:', path.basename(htmlPath))
 }
 
 const BANNER =
@@ -135,9 +129,9 @@ const main = () => {
     const htmlPaths = getHtmlFiles(unzippedInputPath)
     log(`found ${htmlPaths.length} html files`)
 
-    const pool = workerpool.pool()
     for (const htmlPath of htmlPaths) {
         workerProcessHtmlFile(htmlPath)
+        log('processed:', path.basename(htmlPath))
     }
 
     console.timeEnd('execution time')
