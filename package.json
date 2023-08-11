@@ -1,10 +1,11 @@
 {
-    "type": "module",
+    "module": "module",
     "dependencies": {
         "adm-zip": "^0.5.10",
-        "argparse": "^2.0.1",
         "jsdom": "^22.1.0",
-        "piscina": "^4.0.0",
-        "prettier": "^2.8.8"
+        "piscina": "^4.1.0",
+        "prettier": "^2.8.8",
+        "ts-node": "^10.9.1",
+        "typescript": "^5.1.6"
     }
 }

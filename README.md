@@ -19,9 +19,9 @@ npm install
 clear
 
 # test
-node notionbackup ./demo/blog.zip
-node notionbackup ./demo/all\ blocks.zip
-node notionbackup ./demo/full\ templates.zip
+npx ts-node notionbackup ./demo/blog.zip
+npx ts-node notionbackup ./demo/all\ blocks.zip
+npx ts-node notionbackup ./demo/full\ templates.zip
 ```
 
 just run this script on your exported HTML zip files from Notion.

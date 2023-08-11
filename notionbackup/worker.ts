@@ -36,7 +36,9 @@ export default ({ htmlPath }) => {
     const anchors = anchorWrappers.map((wrapper) => wrapper.querySelector('a')).filter((anchor) => anchor)
     const isAsset = (anchor) => anchor.hasAttribute('href') && anchor.getAttribute('href') && !anchor.getAttribute('href').startsWith('http')
     anchors.filter(isAsset).forEach((anchor) => {
+        assert(anchor)
         const href = anchor.getAttribute('href')
+        assert(href && typeof href === 'string')
         const filename = path.basename(href)
         anchor.textContent = filename
     })
@@ -45,6 +47,7 @@ export default ({ htmlPath }) => {
     const cssInjection = fs.readFileSync(path.join(process.cwd(), 'notionbackup', 'injection.css'), 'utf8')
     assert(cssInjection && typeof cssInjection === 'string')
     const styleElem = dom.window.document.querySelector('style')
+    assert(styleElem)
     styleElem.innerHTML = styleElem.innerHTML + '\n\n' + cssInjection
 
     // prettify html
