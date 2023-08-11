@@ -1,11 +1,13 @@
 {
     "module": "module",
     "dependencies": {
+        "@types/workerpool": "^6.4.0",
         "adm-zip": "^0.5.10",
         "jsdom": "^22.1.0",
         "piscina": "^4.1.0",
         "prettier": "^2.8.8",
         "ts-node": "^10.9.1",
-        "typescript": "^5.1.6"
+        "typescript": "^5.1.6",
+        "workerpool": "^6.4.0"
     }
 }
