@@ -13,15 +13,15 @@ make your html exports editable and fully offline – keep them forever.
 git clone https://github.com/sueszli/notionBackup
 cd notionBackup
 
-# install dependenciess
+# install dependencies (see: https://bun.sh/)
 curl -fsSL https://bun.sh/install | bash
 bun install
 clear
 
 # test
-bun run notionbackup ./demo/blog.zip
-bun run notionbackup ./demo/all\ blocks.zip
-bun run notionbackup ./demo/full\ templates.zip
+bun run notionbackup.ts ./demo/blog.zip
+bun run notionbackup.ts ./demo/all\ blocks.zip
+bun run notionbackup.ts ./demo/full\ templates.zip
 ```
 
 just run this script on your exported HTML zip files from Notion.

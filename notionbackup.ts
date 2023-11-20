@@ -50,14 +50,11 @@ function getHtmlFiles(dirPath: string): string[] {
 }
 
 function getElemClassArray(elem: Element) {
-    const noClass = !elem.hasAttribute('class')
-    if (noClass) {
+    const classAttr = elem.getAttribute('class')
+    if (!classAttr) {
         return []
     }
-    return elem
-        .getAttribute('class')
-        .split(' ')
-        .filter((s) => s.trim())
+    return classAttr.split(' ').filter((s) => s.trim())
 }
 
 async function processHtml(htmlPath: string) {
@@ -78,6 +75,7 @@ async function processHtml(htmlPath: string) {
     const anchors: (Element | null)[] = anchorWrappers.map((wrapper) => wrapper.querySelector('a')).filter((anchor) => anchor)
     const isAsset = (anchor) => anchor.hasAttribute('href') && anchor.getAttribute('href') && !anchor.getAttribute('href').startsWith('http')
     anchors.filter(isAsset).forEach((anchor) => {
+        assert(anchor)
         const href: string | null = anchor.getAttribute('href')
         assert(href)
         const filename: string = path.basename(href)
@@ -92,11 +90,11 @@ async function processHtml(htmlPath: string) {
 
     // cache images
     const imgs = Array.from(elems).filter((elem) => elem.tagName.toLowerCase() === 'img')
-    const tasks = imgs
-        .filter((img) => img.hasAttribute('src'))
-        .filter((img) => img.getAttribute('src').startsWith('http'))
+    const externalImgs = imgs.filter((img) => img.hasAttribute('src') && img.getAttribute('src')?.startsWith('http'))
+    const tasks = externalImgs
         .map((img) => {
-            const urlStr: string = img.getAttribute('src')
+            const urlStr: string | null = img.getAttribute('src')
+            assert(urlStr)
             const url = new URL(urlStr)
 
             const getUniqueFileName = (url: URL) => {
@@ -161,7 +159,7 @@ async function processHtml(htmlPath: string) {
     })
 
     // inject custom css
-    const cssInjection: string = fs.readFileSync(path.join(process.cwd(), 'notionbackup', 'injection.css'), 'utf8')
+    const cssInjection: string = fs.readFileSync(path.join(process.cwd(), 'injection.css'), 'utf8')
     const styleElem: Element = dom.window.document.querySelector('style')
     styleElem.innerHTML = styleElem.innerHTML + '\n\n' + cssInjection
 
