@@ -75,10 +75,11 @@ async function processHtml(htmlPath: string) {
 
     // remove AWS name from asset links
     const anchorWrappers = Array.from(elems).filter((elem) => getElemClassArray(elem).includes('source'))
-    const anchors: Element[] = anchorWrappers.map((wrapper) => wrapper.querySelector('a')).filter((anchor) => anchor)
+    const anchors: (Element | null)[] = anchorWrappers.map((wrapper) => wrapper.querySelector('a')).filter((anchor) => anchor)
     const isAsset = (anchor) => anchor.hasAttribute('href') && anchor.getAttribute('href') && !anchor.getAttribute('href').startsWith('http')
     anchors.filter(isAsset).forEach((anchor) => {
-        const href: string = anchor.getAttribute('href')
+        const href: string | null = anchor.getAttribute('href')
+        assert(href)
         const filename: string = path.basename(href)
         anchor.textContent = filename
     })
@@ -127,7 +128,8 @@ async function processHtml(htmlPath: string) {
         .filter((elem) => getElemClassArray(elem).includes('equation'))
     if (equations.length > 0) {
         const eqn = equations[0]
-        const styleElem: Element = eqn.querySelector('style')
+        const styleElem: Element | null = eqn.querySelector('style')
+        assert(styleElem)
         const styleStr = styleElem.innerHTML
         const urlStr = styleStr.split('url(')[1].split(')')[0].replace(/'/g, '')
 
@@ -154,6 +156,7 @@ async function processHtml(htmlPath: string) {
     }
     equations.forEach((eqn) => {
         const comment = dom.window.document.createComment('prettier-ignore')
+        assert(eqn.parentNode)
         eqn.parentNode.insertBefore(comment, eqn)
     })
 
@@ -164,7 +167,7 @@ async function processHtml(htmlPath: string) {
 
     // prettify html
     const optimizedHtmlStr: string = dom.serialize()
-    const prettyHtmlStr = prettier.format(optimizedHtmlStr, {
+    const prettyHtmlStr = await prettier.format(optimizedHtmlStr, {
         parser: 'html',
         tabWidth: 4,
         printWidth: 160,
