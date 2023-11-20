@@ -153,7 +153,7 @@ async function processHtml(htmlPath: string) {
         log('\t cached katex.min.css')
     }
     equations.forEach((eqn) => {
-        const comment = dom.window.document.createComment('prettier-ignore')
+        const comment = dom.window.document.createComment('prettier-ignore') // unfortunately doesn't work for a whole block
         assert(eqn.parentNode)
         eqn.parentNode.insertBefore(comment, eqn)
     })
