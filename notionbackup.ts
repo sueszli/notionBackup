@@ -31,6 +31,7 @@ function getUnzippedInputPath(arg: string): string {
     // unzip 'arg' file into './output/arg' directory
     const zipFilePath = arg
     const unzipDirPath = innerDirPath
+    const AdmZip = require('adm-zip')
     const zip = new AdmZip(zipFilePath)
     zip.extractAllTo(unzipDirPath)
 
@@ -60,7 +61,7 @@ function getElemClassArray(elem: Element) {
 async function processHtml(htmlPath: string) {
     const htmlStr: string = fs.readFileSync(htmlPath, 'utf8')
     const dom: jsdom.JSDOM = new jsdom.JSDOM(htmlStr)
-    const elems: Element[] = dom.window.document.querySelectorAll('*')
+    const elems = dom.window.document.querySelectorAll('*')
 
     // remove ids
     elems.forEach((elem) => elem.removeAttribute('id'))
@@ -91,32 +92,31 @@ async function processHtml(htmlPath: string) {
     // cache images
     const imgs = Array.from(elems).filter((elem) => elem.tagName.toLowerCase() === 'img')
     const externalImgs = imgs.filter((img) => img.hasAttribute('src') && img.getAttribute('src')?.startsWith('http'))
-    const tasks = externalImgs
-        .map((img) => {
-            const urlStr: string | null = img.getAttribute('src')
-            assert(urlStr)
-            const url = new URL(urlStr)
+    const tasks = externalImgs.map((img) => {
+        const urlStr: string | null = img.getAttribute('src')
+        assert(urlStr)
+        const url = new URL(urlStr)
 
-            const getUniqueFileName = (url: URL) => {
-                let filename = path.basename(url.pathname)
-                const filenameEnding = path.extname(filename)
-                if (!filenameEnding) {
-                    filename = filename + '.png'
-                }
-                return filename.split('.').slice(0, -1).join('.') + randomUUID() + filenameEnding
+        const getUniqueFileName = (url: URL) => {
+            let filename = path.basename(url.pathname)
+            const filenameEnding = path.extname(filename)
+            if (!filenameEnding) {
+                filename = filename + '.png'
             }
-            const downloadPath = path.join(cachePath, getUniqueFileName(url))
+            return filename.split('.').slice(0, -1).join('.') + randomUUID() + filenameEnding
+        }
+        const downloadPath = path.join(cachePath, getUniqueFileName(url))
 
-            return axios({
-                method: 'get',
-                url: urlStr,
-                responseType: 'stream',
-            }).then((response) => {
-                response.data.pipe(fs.createWriteStream(downloadPath))
-                const relativePath = path.relative(path.dirname(htmlPath), downloadPath)
-                img.setAttribute('src', relativePath)
-            })
+        return axios({
+            method: 'get',
+            url: urlStr,
+            responseType: 'stream',
+        }).then((response) => {
+            response.data.pipe(fs.createWriteStream(downloadPath))
+            const relativePath = path.relative(path.dirname(htmlPath), downloadPath)
+            img.setAttribute('src', relativePath)
         })
+    })
     await Promise.all(tasks)
     log('\t cached', tasks.length, 'images')
 
@@ -148,6 +148,7 @@ async function processHtml(htmlPath: string) {
         const linkElem = dom.window.document.createElement('link')
         linkElem.setAttribute('rel', 'stylesheet')
         linkElem.setAttribute('href', path.relative(path.dirname(htmlPath), downloadPath))
+        assert(head)
         head.appendChild(linkElem)
 
         log('\t cached katex.min.css')
@@ -160,7 +161,8 @@ async function processHtml(htmlPath: string) {
 
     // inject custom css
     const cssInjection: string = fs.readFileSync(path.join(process.cwd(), 'injection.css'), 'utf8')
-    const styleElem: Element = dom.window.document.querySelector('style')
+    const styleElem: Element | null = dom.window.document.querySelector('style')
+    assert(styleElem)
     styleElem.innerHTML = styleElem.innerHTML + '\n\n' + cssInjection
 
     // prettify html
