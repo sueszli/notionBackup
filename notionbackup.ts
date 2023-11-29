@@ -7,6 +7,7 @@ import jsdom from 'jsdom'
 import prettier from 'prettier'
 import { randomUUID } from 'node:crypto'
 import axios from 'axios'
+import { Element } from 'dom'
 
 function getInputPath(): string {
     const args: string[] = process.argv.slice(2)
@@ -31,7 +32,6 @@ function getUnzippedInputPath(arg: string): string {
     // unzip 'arg' file into './output/arg' directory
     const zipFilePath = arg
     const unzipDirPath = innerDirPath
-    const AdmZip = require('adm-zip')
     const zip = new AdmZip(zipFilePath)
     zip.extractAllTo(unzipDirPath)
 
@@ -50,6 +50,7 @@ function getHtmlFiles(dirPath: string): string[] {
     return allSubFiles.filter((f) => f.endsWith('.html'))
 }
 
+
 function getElemClassArray(elem: Element) {
     const classAttr = elem.getAttribute('class')
     if (!classAttr) {
@@ -64,17 +65,17 @@ async function processHtml(htmlPath: string) {
     const elems = dom.window.document.querySelectorAll('*')
 
     // remove ids
-    elems.forEach((elem) => elem.removeAttribute('id'))
+    elems.forEach((elem: Element) => elem.removeAttribute('id'))
 
     // remove empty class attributes
     Array.from(elems)
-        .filter((elem) => getElemClassArray(elem).length === 0)
-        .forEach((elem) => elem.removeAttribute('class'))
+        .filter((elem: Element) => getElemClassArray(elem).length === 0)
+        .forEach((elem: Element) => elem.removeAttribute('class'))
 
     // remove AWS name from asset links
-    const anchorWrappers = Array.from(elems).filter((elem) => getElemClassArray(elem).includes('source'))
-    const anchors: (Element | null)[] = anchorWrappers.map((wrapper) => wrapper.querySelector('a')).filter((anchor) => anchor)
-    const isAsset = (anchor) => anchor.hasAttribute('href') && anchor.getAttribute('href') && !anchor.getAttribute('href').startsWith('http')
+    const anchorWrappers = Array.from(elems).filter((elem: Element) => getElemClassArray(elem).includes('source'))
+    const anchors: (Element | null)[] = anchorWrappers.map((wrapper: Element) => wrapper.querySelector('a')).filter((anchor) => anchor)
+    const isAsset = (anchor: Element | null) => anchor && anchor.hasAttribute('href') && anchor.getAttribute('href') && !anchor.getAttribute('href').startsWith('http')
     anchors.filter(isAsset).forEach((anchor) => {
         assert(anchor)
         const href: string | null = anchor.getAttribute('href')
@@ -90,9 +91,9 @@ async function processHtml(htmlPath: string) {
     }
 
     // cache images
-    const imgs = Array.from(elems).filter((elem) => elem.tagName.toLowerCase() === 'img')
-    const externalImgs = imgs.filter((img) => img.hasAttribute('src') && img.getAttribute('src')?.startsWith('http'))
-    const tasks = externalImgs.map((img) => {
+    const imgs = Array.from(elems).filter((elem: Element) => elem.tagName.toLowerCase() === 'img')
+    const externalImgs = imgs.filter((img: Element) => img.hasAttribute('src') && img.getAttribute('src')?.startsWith('http'))
+    const tasks = externalImgs.map((img: Element) => {
         const urlStr: string | null = img.getAttribute('src')
         assert(urlStr)
         const url = new URL(urlStr)
@@ -122,10 +123,10 @@ async function processHtml(htmlPath: string) {
 
     // cache katex equations
     const equations = Array.from(elems)
-        .filter((elem) => elem.tagName.toLowerCase() === 'figure')
-        .filter((elem) => getElemClassArray(elem).includes('equation'))
+        .filter((elem: Element) => elem.tagName.toLowerCase() === 'figure')
+        .filter((elem: Element) => getElemClassArray(elem).includes('equation'))
     if (equations.length > 0) {
-        const eqn = equations[0]
+        const eqn: Element = equations[0]
         const styleElem: Element | null = eqn.querySelector('style')
         assert(styleElem)
         const styleStr = styleElem.innerHTML
@@ -153,7 +154,7 @@ async function processHtml(htmlPath: string) {
 
         log('\t cached katex.min.css')
     }
-    equations.forEach((eqn) => {
+    equations.forEach((eqn: Element) => {
         const comment = dom.window.document.createComment('prettier-ignore') // unfortunately doesn't work for a whole block
         assert(eqn.parentNode)
         eqn.parentNode.insertBefore(comment, eqn)

@@ -16,27 +16,23 @@ git clone https://github.com/sueszli/notionBackup
 cd notionBackup
 
 # install dependencies
-curl -fsSL https://bun.sh/install | bash
-bun install
+npm install
+npm upgrade
 clear
 
 # test
-bun run notionbackup.ts ./demo/blog.zip
-bun run notionbackup.ts ./demo/all\ blocks.zip
-bun run notionbackup.ts ./demo/full\ templates.zip
+npx ts-node notionbackup.ts ./demo/blog.zip
+npx ts-node notionbackup.ts ./demo/all\ blocks.zip
+npx ts-node notionbackup.ts ./demo/full\ templates.zip
 ```
 
 but keep in mind: once content leaves notion, you can't bring it back. exported html can't be reimported into notion or similar apps/editors that are as good as notion. exports are permanent choices.
 
-<br>
+<br><br>
 
----
+## not convinced?
 
-<br>
-
-still not convinced to use?
-
-here's why this tool makes your notion-backups future-proof. there are 5 ways to back up your notion content – here's a comparison:
+here's why this tool makes your notion backups future-proof. there are 5 ways to back up your notion content in total – here's a comparison:
 
 | export type           | no data loss      | fully offline                  | editable      |
 | --------------------- | ----------------- | ------------------------------ | ------------- |
@@ -47,14 +43,15 @@ here's why this tool makes your notion-backups future-proof. there are 5 ways to
 | html                  | ✅                | ❌ (CDN dependency)            | ❌ (minified) |
 | _html + notionBackup_ | ✅                | ✅                             | ✅            |
 
-<br>
 
-_non-html exports:_
+now when comparing the 5 export types, we can see that:
+
+_a) non-html exports:_
 
 - everything that isn't html is inherently lossy. this is because json, markdown and pdf can't express everything that html can (like toggles, nested blocks, etc).
 
-_html exports:_
+_b) html exports:_
 
 - html exports are lossless but not editable (minified), require an internet connection (javascript CDN dependency for KaTeX) and have awkward styling thay makes them hard to read.
 
-but this script fixes just that! it makes html exports fully local, editable and pretty.
+and this script gives you the best of both worlds by fixing the downsides of html exports. it makes them editable and caches all dependencies.
