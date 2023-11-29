@@ -5,10 +5,8 @@
  / /|  / /_/ / /_/ / /_/ / / / /  / /_/ / /_/ / /__/ ,< / /_/ / /_/ /
 /_/ |_/\____/\__/_/\____/_/ /_/  /_____/\__,_/\___/_/|_|\__,_/ .___/
                                                             /_/
-make your html exports editable and cache dependencies – keep them forever.
+make your html exports editable, cache dependencies – keep them forever.
 ```
-
-just run this script on your zipped `.html` exports from notion.
 
 ```bash
 # clone
@@ -26,25 +24,26 @@ npx ts-node notionbackup.ts ./demo/all\ blocks.zip
 npx ts-node notionbackup.ts ./demo/full\ templates.zip
 ```
 
-but keep in mind: once content leaves notion, you can't bring it back. exported html can't be reimported into notion or similar apps/editors that are as good as notion. exports are permanent choices.
+just run this script on your zipped `.html` exports from notion to check it out in action.
 
-<br>
+<br><br>
 
 ## not convinced?
 
-here's why this tool makes your notion backups future-proof. there are 5 ways to back up your notion content in total – here's a comparison:
+this tool makes your notion backups future-proof – and here's why.
+
+here are all the ways you can export your data.
 
 | export type           | no data loss      | fully offline                  | editable      |
 | --------------------- | ----------------- | ------------------------------ | ------------- |
 | notion API (json)     | ❌                | ✅                             | ✅            |
-| web scraping (html)   | ❌ (not reliable) | ❌ (depends on implementation) | ❌ (minified) |
+| web scraping (html)   | ❌ (unreliable)   | ❌ (depends on implementation) | ❌ (minified) |
 | pdf                   | ❌                | ✅                             | ❌            |
 | markdown              | ❌                | ✅                             | ✅            |
 | html                  | ✅                | ❌ (CDN dependency)            | ❌ (minified) |
 | _html + notionBackup_ | ✅                | ✅                             | ✅            |
 
-
-now when comparing the 5 export types, we can see that:
+we can cluster the export types in 2 groups:
 
 _a) non-html exports:_
 
@@ -52,6 +51,7 @@ _a) non-html exports:_
 
 _b) html exports:_
 
-- html exports are lossless but not editable (minified), require an internet connection (javascript CDN dependency for KaTeX) and have awkward styling thay makes them hard to read.
+- html exports are lossless but not editable (minified), require an internet connection (javascript CDN dependency for KaTeX) and are styled very awkwardly.
 
-and this script gives you the best of both worlds by fixing the downsides of html exports. it makes them editable and caches all dependencies.
+here's where this script comes in. it gives you the best of both worlds by fixing the downsides of html exports and provides you with a reliable way to back your data up.
+
