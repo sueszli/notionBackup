@@ -5,7 +5,7 @@
  / /|  / /_/ / /_/ / /_/ / / / /  / /_/ / /_/ / /__/ ,< / /_/ / /_/ /
 /_/ |_/\____/\__/_/\____/_/ /_/  /_____/\__,_/\___/_/|_|\__,_/ .___/
                                                             /_/
-make your html exports editable and fully offline – keep them forever.
+make your html exports editable and cache dependencies – keep them forever.
 ```
 
 just run this script on your zipped `.html` exports from notion.
@@ -28,7 +28,7 @@ npx ts-node notionbackup.ts ./demo/full\ templates.zip
 
 but keep in mind: once content leaves notion, you can't bring it back. exported html can't be reimported into notion or similar apps/editors that are as good as notion. exports are permanent choices.
 
-<br><br>
+<br>
 
 ## not convinced?
 
