@@ -26,6 +26,9 @@ npx ts-node notionbackup.ts ./demo/full\ templates.zip
 
 just run this script on your zipped `.html` exports from notion to check it out in action.
 
+While exporting from notion select "HTML" as Export format, "Everything" in Include 
+Content to also include images, "Include subpages" to include all subpages and also "Create folders for subpages" to get a better folder structure in the export.
+
 <br><br>
 
 ## not convinced?
