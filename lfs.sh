@@ -1,4 +1,4 @@
-clear
+# note: avoid lfs if possible. you will be charged for storage on github.
 
 # install lfs (see: https://git-lfs.com/)
 git lfs install
