@@ -1,4 +1,5 @@
-# note: avoid lfs if possible. you will be charged for storage on github.
+# NOTE: AVOID LFS AT ALL COSTS
+# you can bypass it by chunking files before uploading and merging on each clone
 
 # install lfs (see: https://git-lfs.com/)
 git lfs install
