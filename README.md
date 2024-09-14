@@ -32,9 +32,9 @@ we can differentiate between two types of exports:
 
 </details>
 
-<br><br>
+<br>
 
-*getting started:*
+# usage
 
 ```bash
 git clone https://github.com/sueszli/notionBackup
