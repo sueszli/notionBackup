@@ -8,6 +8,7 @@ from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
 
+
 args = argparse.ArgumentParser(description="fix notion html exports")
 args.add_argument("path", type=Path, help="path to the zipped html export")
 args = args.parse_args()
@@ -24,7 +25,7 @@ cachepath = unzippath / ".cache"
 cachepath.mkdir(exist_ok=True)
 cached_img_links = []
 
-css_injectionpath = Path.cwd() / "injections" / "injection.css"
+css_injectionpath = Path.cwd() / "notionbackup" / "injections" / "injection.css"
 
 
 htmlpaths = list(unzippath.rglob("*.html"))
