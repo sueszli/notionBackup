@@ -5,36 +5,15 @@
  / /|  / /_/ / /_/ / /_/ / / / /  / /_/ / /_/ / /__/ ,< / /_/ / /_/ /
 /_/ |_/\____/\__/_/\____/_/ /_/  /_____/\__,_/\___/_/|_|\__,_/ .___/
                                                             /_/
-make your html exports editable, cache dependencies – keep them forever.
+future-proof your notion backups
 ```
 
-```bash
-# clone
-git clone https://github.com/sueszli/notionBackup
-cd notionBackup
+notion's default html exports are the only way to get a lossless backup of your data. however, they are not editable, require an internet connection and are styled very differently from the notion web app.
 
-# install dependencies
-npm install
-npm upgrade
-clear
+this script fixes all of that by converting your html exports into a (1) editable, (2) fully offline and (3) notion-styled format.
 
-# test
-npx ts-node notionbackup.ts ./demo/blog.zip
-npx ts-node notionbackup.ts ./demo/all\ blocks.zip
-npx ts-node notionbackup.ts ./demo/full\ templates.zip
-```
-
-just run this script on your zipped `.html` exports from notion to check it out in action.
-
-when exporting, remember to select "html" as the export format, enable the "everything" option, "include subpages" and also "create folders for subpages".
-
-<br><br>
-
-## not convinced?
-
-this tool makes your notion backups future-proof – and here's why.
-
-here are all the ways you can export your data.
+<details>
+  <summary> <i> learn more! </i> </summary>
 
 | export type           | no data loss      | fully offline                  | editable      |
 | --------------------- | ----------------- | ------------------------------ | ------------- |
@@ -45,15 +24,27 @@ here are all the ways you can export your data.
 | html                  | ✅                | ❌ (CDN dependency)            | ❌ (minified) |
 | _html + notionBackup_ | ✅                | ✅                             | ✅            |
 
-we can cluster the export types in 2 groups:
+we can differentiate between two types of exports:
 
-_a) non-html exports:_
+*a) non-html exports:* everything that isn't html is inherently lossy. this is because json, markdown and pdf can't express everything that html can (like toggles, nested blocks, etc).
 
-- everything that isn't html is inherently lossy. this is because json, markdown and pdf can't express everything that html can (like toggles, nested blocks, etc).
+*b) html exports:* html exports are lossless but not editable (minified), require an internet connection (javascript CDN dependency for KaTeX) and are styled very differently from the notion web app.
 
-_b) html exports:_
+</details>
 
-- html exports are lossless but not editable (minified), require an internet connection (javascript CDN dependency for KaTeX) and are styled very awkwardly.
+*getting started:*
 
-here's where this script comes in. it gives you the best of both worlds by fixing the downsides of html exports and provides you with a reliable way to back your data up.
+```bash
+git clone https://github.com/sueszli/notionBackup
+cd notionBackup
+pip install -r requirements.txt
 
+# demo
+python ./src/notionBackup.py ./data/all-blocks.zip
+python ./src/notionBackup.py ./data/blog.zip
+python ./src/notionBackup.py ./data/full-templates.zip
+```
+
+<!-- pip install -e git+https://github.com/sueszli/notionBackup -->
+
+when exporting from notion, remember to select "html" as the export format, enable the "everything" option, "include subpages" and also "create folders for subpages".
