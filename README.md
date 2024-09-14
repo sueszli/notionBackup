@@ -5,7 +5,7 @@
  / /|  / /_/ / /_/ / /_/ / / / /  / /_/ / /_/ / /__/ ,< / /_/ / /_/ /
 /_/ |_/\____/\__/_/\____/_/ /_/  /_____/\__,_/\___/_/|_|\__,_/ .___/
                                                             /_/
-future-proof your notion backups
+future-proof your notion exports
 ```
 
 notion's default html exports are the only way to get a lossless backup of your data. however, they are not editable, require an internet connection and are styled very differently from the notion web app.
