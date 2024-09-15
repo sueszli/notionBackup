@@ -70,7 +70,6 @@ for htmlpath in htmlpaths:
         if url in cached_img_links:
             continue
         cached_img_links.append(url)
-        
         response = requests.get(url, stream=True)
         filename = Path(url).name
         cache_img_path = cachepath / filename
