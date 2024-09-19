@@ -36,7 +36,9 @@ we can differentiate between two types of exports:
 
 # usage
 
-<!-- pip install -e git+https://github.com/sueszli/notionBackup -->
+<!-- would be cool to have something like: pip install -e git+https://github.com/sueszli/notionBackup -->
+
+when exporting from notion, remember to select "html" as the export format, enable the "everything" option, "include subpages" and also "create folders for subpages".
 
 ```bash
 git clone https://github.com/sueszli/notionBackup
@@ -48,5 +50,3 @@ python notionbackup ./data/all-blocks.zip
 python notionbackup ./data/blog.zip
 python notionbackup ./data/full-templates.zip
 ```
-
-when exporting from notion, remember to select "html" as the export format, enable the "everything" option, "include subpages" and also "create folders for subpages".
