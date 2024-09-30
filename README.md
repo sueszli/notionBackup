@@ -10,7 +10,7 @@ future-proof your notion exports
 
 notion's default html exports are the only way to get a lossless backup of your data. however, they are not editable, require an internet connection and are styled very differently from the notion web app.
 
-this script fixes all of that by converting your html exports into a (1) editable, (2) fully offline and (3) notion-styled format.
+this script fixes all of that by converting your html exports into an (1) editable, (2) fully offline and (3) notion-styled format.
 
 <details>
   <summary> <i> learn more! </i> </summary>
