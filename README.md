@@ -32,8 +32,6 @@ we can differentiate between two types of exports:
 
 </details>
 
-<br>
-
 # usage
 
 <!-- would be cool to have something like: pip install -e git+https://github.com/sueszli/notionBackup -->
