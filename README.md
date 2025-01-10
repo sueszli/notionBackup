@@ -39,8 +39,6 @@ we can differentiate between two types of exports:
 when exporting from notion, remember to select "html" as the export format, enable the "everything" option, "include subpages" and also "create folders for subpages".
 
 ```bash
-git clone https://github.com/sueszli/notionBackup
-cd notionBackup
 pip install -r requirements.txt
 
 # demo
