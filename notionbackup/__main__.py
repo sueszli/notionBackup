@@ -70,13 +70,16 @@ for htmlpath in htmlpaths:
         if url in cached_img_links:
             continue
         cached_img_links.append(url)
-        response = requests.get(url, stream=True)
-        filename = Path(url).name
-        cache_img_path = cachepath / filename
-        with open(cache_img_path, "wb") as f:
-            for chunk in response.iter_content(chunk_size=128):
-                f.write(chunk)
-        img["src"] = os.path.relpath(cache_img_path, htmlpath.parent)
+        try:
+            response = requests.get(url, stream=True)
+            filename = Path(url).name
+            cache_img_path = cachepath / filename
+            with open(cache_img_path, "wb") as f:
+                for chunk in response.iter_content(chunk_size=128):
+                    f.write(chunk)
+            img["src"] = os.path.relpath(cache_img_path, htmlpath.parent)
+        except requests.exceptions.ConnectionError:
+            pass
     print(f"\t cached {len(external_imgs)} images")
 
     # cache katex
